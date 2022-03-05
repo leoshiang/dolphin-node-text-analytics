@@ -1,0 +1,39 @@
+{
+  "name": "node-nlp",
+  "version": "0.0.1",
+  "main": "./index.js",
+  "description": "",
+  "author": "Leo Shiang <leoshiang@gmail.com>",
+  "homepage": "https://github.com/leoshiang/node-nlp#readme",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest",
+    "build": "webpack",
+    "docs": "jsdoc --configure .jsdoc.json --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leoshiang/node-nlp.git"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.5",
+    "@babel/preset-env": "^7.16.11",
+    "babel-loader": "^8.2.3",
+    "babel-plugin-rewire": "^1.2.0",
+    "better-docs": "^2.7.2",
+    "jest": "^27.5.1"
+  },
+  "dependencies": {
+    "clean-jsdoc-theme": "^3.3.3",
+    "excel4node": "^1.7.2",
+    "fs": "^0.0.1-security",
+    "lodash": "^4.17.21",
+    "mock-fs": "^5.1.2",
+    "node-dolphin": "^0.0.3",
+    "nodejieba": "^2.6.0",
+    "random-access-file": "^2.2.0",
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2",
+    "xlsx": "^0.18.2"
+  }
+}
