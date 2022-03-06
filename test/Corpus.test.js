@@ -1,19 +1,19 @@
-const { Corpus } = require('../src/Corpus')
+const { DocumentCollection } = require('../src/DocumentCollection')
 const FoodServiceDataset = require('../src/FoodServicesDataset')
 const mock = require('mock-fs')
 
 describe('載入 Excel', function () {
   test('載入餐飲業Excel，length 應等於70', function () {
-    const corpus = new Corpus()
-    corpus.loadFromWorkBook(FoodServiceDataset.ExcelWorkbook)
-    expect(corpus.length).toBe(70)
+    const dc = new DocumentCollection()
+    dc.loadFromWorkBook(FoodServiceDataset.ExcelWorkbook)
+    expect(dc.length).toBe(70)
   })
 
   test('載入餐飲業Excel，clear 之後，length 應等於0', function () {
-    const corpus = new Corpus()
-    corpus.loadFromWorkBook(FoodServiceDataset.ExcelWorkbook)
-    corpus.clear()
-    expect(corpus.length).toBe(0)
+    const dc = new DocumentCollection()
+    dc.loadFromWorkBook(FoodServiceDataset.ExcelWorkbook)
+    dc.clear()
+    expect(dc.length).toBe(0)
   })
 })
 
@@ -24,8 +24,8 @@ describe('載入 loadFromFile', function () {
              'some-file.txt': FoodServiceDataset.SingleDocument,
            },
          })
-    let corpus = new Corpus()
-    expect(corpus.loadFromFile('./docs/a.txt').length).toBe(1)
+    let dc = new DocumentCollection()
+    expect(dc.loadFromFile('./docs/a.txt').length).toBe(1)
     mock.restore()
   })
 })

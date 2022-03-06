@@ -7,14 +7,14 @@ const FoodServiceDataSet = require('./FoodServicesDataset')
  */
 class Tokenizer {
 
-  static parse (document) {
+  static parseDocument (document) {
     let terms = Jieba.cut(document.asString())
     return new Tokens(terms.filter(x => x !== ' '))
   }
 
-  static parseCollection (documentCollection) {
+  static parseCollection (collection) {
     let result = []
-    documentCollection.forEach(document => result.push(this.parse(document)))
+    collection.forEach(document => result.push(this.parseDocument(document)))
     return result
   }
 }

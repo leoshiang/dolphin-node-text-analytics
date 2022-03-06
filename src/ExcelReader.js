@@ -4,8 +4,8 @@ const { Document } = require('./Document')
 
 function createDocumentFromWorksheet (worksheet, name) {
   let rawLines = xlsx.utils.sheet_to_json(worksheet, { header: 1 })
-  let lines = rawLines.filter(x => x.length > 0)
-  return new Document(name).addText(lines)
+  let lines = rawLines.map(x => x[0]).filter(x => x.length > 0)
+  return new Document(name).addLines(lines)
 }
 
 /**

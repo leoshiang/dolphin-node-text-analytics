@@ -3,3 +3,5 @@
 /coverage/
 /publish.sh
 /lib/index.bundle.js
+/stopword.txt
+/userdict.txt

@@ -1,7 +1,7 @@
 const { Document } = require('./Document')
 const ExcelReader = require('./ExcelReader')
 
-class Corpus {
+class DocumentCollection {
   #documents
 
   constructor () {
@@ -35,5 +35,5 @@ class Corpus {
 }
 
 module.exports = {
-  Corpus,
+  DocumentCollection: DocumentCollection,
 }
