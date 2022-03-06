@@ -2,7 +2,7 @@ const { Document } = require('../src/Document')
 const { Tokenizer } = require('../src/Tokenizer')
 const mock = require('mock-fs')
 const _ = require('lodash')
-const FoodServiceDataset = require('../src/FoodServiceDataset')
+const FoodServiceDataset = require('../src/FoodServicesDataset')
 
 describe('測試 fromDocument', function () {
   test('傳入檔案名稱，count 應包含所有的檔案資料。', function () {
@@ -13,7 +13,7 @@ describe('測試 fromDocument', function () {
          })
 
     let document = new Document()
-    document.addFile('./docs/some-file.txt')
+    document.loadFromFile('./docs/some-file.txt')
     mock.restore()
 
     let tokens = Tokenizer.parse(document)
@@ -37,7 +37,7 @@ describe('測試 countOf', function () {
          })
 
     let document = new Document()
-    document.addFile('./docs/some-file.txt')
+    document.loadFromFile('./docs/some-file.txt')
     mock.restore()
 
     let tokens = Tokenizer.parse(document)
@@ -56,7 +56,7 @@ describe('測試 totalCount', function () {
          })
 
     let document = new Document()
-    document.addFile('./docs/some-file.txt')
+    document.loadFromFile('./docs/some-file.txt')
     mock.restore()
 
     let tokens = Tokenizer.parse(document)
@@ -73,7 +73,7 @@ describe('測試 terms', function () {
          })
 
     let document = new Document()
-    document.addFile('./docs/some-file.txt')
+    document.loadFromFile('./docs/some-file.txt')
     mock.restore()
 
     let tokens = Tokenizer.parse(document)
@@ -90,7 +90,7 @@ describe('測試 descendingOrder', function () {
          })
 
     let document = new Document()
-    document.addFile('./docs/some-file.txt')
+    document.loadFromFile('./docs/some-file.txt')
     mock.restore()
 
     let least3 = Tokenizer.parse(document).descendingOrder().least(3)
@@ -109,7 +109,7 @@ describe('測試 top', function () {
          })
 
     let document = new Document()
-    document.addFile('./docs/some-file.txt')
+    document.loadFromFile('./docs/some-file.txt')
     mock.restore()
 
     let lowest3 = Tokenizer.parse(document).ascendingOrder().dump().top(3)

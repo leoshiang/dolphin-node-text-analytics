@@ -1,6 +1,6 @@
 const { Jieba } = require('./Jieba')
 const { Tokens } = require('./Tokens')
-const FoodServiceDataSet = require('./FoodServiceDataset')
+const FoodServiceDataSet = require('./FoodServicesDataset')
 
 /**
  * @class
@@ -9,8 +9,7 @@ class Tokenizer {
 
   static parse (document) {
     let terms = Jieba.cut(document.asString())
-    let c = terms.filter(x => FoodServiceDataSet.ExtraStopWords.indexOf(x) === -1)
-    return new Tokens(c.filter(x => x !== ' '))
+    return new Tokens(terms.filter(x => x !== ' '))
   }
 
   static parseCollection (documentCollection) {

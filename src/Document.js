@@ -5,10 +5,7 @@ const { Type } = require('node-dolphin')
  * @class
  */
 class Document {
-  /**
-   * @private
-   */
-  #sentences
+  #lines
   #name
 
   /**
@@ -17,7 +14,15 @@ class Document {
    */
   constructor (name) {
     this.#name = name || ''
-    this.#sentences = []
+    this.#lines = []
+  }
+
+  /**
+   * 字元數目。
+   * @return {number} 字元數目。
+   */
+  get length () {
+    return this.#lines.reduce((acc, curr) => acc + curr.length, 0)
   }
 
   /**
@@ -25,7 +30,15 @@ class Document {
    * @return {number} 行數。
    */
   get lineCount () {
-    return this.#sentences.length
+    return this.#lines.length
+  }
+
+  /**
+   * 文件的所有行的資料。
+   * @return {*}
+   */
+  get lines () {
+    return this.#lines
   }
 
   /**
@@ -37,56 +50,43 @@ class Document {
   }
 
   /**
-   * 文件的所有行的資料。
-   * @return {*}
-   */
-  get sentences () {
-    return this.#sentences
-  }
-
-  /**
-   * 加入文字。
-   * @param {string|String[]}text
+   * 加入文字陣列。
+   * @param {String[]} lines 要加入的文字陣列。
    * @return {Document}
+   * @example
+   * let d = new Document()
+   * d.add(['this is line 1, 'this is line 2']
    */
-  add (text) {
-    if (Type.isArray(text)) {
-      this.#sentences = this.#sentences.concat(text)
-    } else {
-      this.#sentences.push(text)
+  addLines (lines) {
+    if (Type.isArray(lines)) {
+      lines.forEach(line => this.addText(line))
     }
     return this
   }
 
   /**
-   * 加入文字檔。
-   * @param {string} fileName 檔案名稱。
-   * @throws {Error} 如果 fileName 所指定的檔案不存在就拋出此例外。
+   * 加入文字。如果傳入空字串或是非文字的資料，會被忽略。如果文字含有換行字元（cr\lf）會自動斷行。
+   * @param {string|string[]} text 要加入的文字。
    * @return {Document}
+   * @example
+   * let d = new Document()
+   * d.add('this is line 1')
+   * d.add('this is line 2')
+   * d.add('this is line 3')
    */
-  addFile (fileName) {
-    if (!fs.existsSync(fileName)) {
-      throw new Error(`檔案 ${fileName}不存在`)
+  addText (text) {
+    if (Type.isString(text) && text !== '') {
+       this.#lines.push(text)
     }
-    const contents = fs.readFileSync(fileName, 'utf8').split('\r\n')
-    this.#sentences = this.#sentences.concat(contents)
     return this
   }
 
   /**
-   * 將所有文字合併成一個字串
+   * 將所有文字合併成一個字串。
    * @return {string} 所有文字合併成的字串
    */
   asString () {
-    return this.#sentences.reduce((acc, curr) => acc + curr, '')
-  }
-
-  /**
-   * 計算字元數目。
-   * @return {number} 字元數目。
-   */
-  charCount () {
-    return this.#sentences.reduce((acc, curr) => acc + curr.length, 0)
+    return this.#lines.reduce((acc, curr) => acc + curr, '')
   }
 
   /**
@@ -95,7 +95,22 @@ class Document {
    */
   clear () {
     this.#name = ''
-    this.#sentences = []
+    this.#lines = []
+    return this
+  }
+
+  /**
+   * 載入文字檔的內容。
+   * @param {string} fileName 檔案名稱。
+   * @param {string} encoding 編碼，預設值為 'utf8'。
+   * @return {Document}
+   */
+  loadFromFile (fileName, encoding = 'utf8') {
+    if (!fs.existsSync(fileName)) {
+      return this
+    }
+    const contents = fs.readFileSync(fileName, encoding).split('\r\n')
+    this.#lines = this.#lines.concat(contents)
     return this
   }
 }

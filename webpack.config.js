@@ -14,10 +14,32 @@ module.exports = {
         use: {
           loader: 'babel-loader?plugins=rewire',
           options: {
-            presets: ['@babel/preset-env']
-          }
-        }
-      }
-    ]
-  }
+            presets: ['@babel/preset-env'],
+          },
+        },
+      },
+    ],
+  },
+  resolve: {
+    fallback: {
+      'fs': false,
+      'node-gyp': false,
+      'npm': false,
+      'path': false,
+      'os': false,
+      'util': false,
+      'url': false,
+      'child_process': false,
+      'crypto': false,
+      'assert': false,
+      'buffer': false,
+      'stream': false,
+      'zlib': false,
+      'tls': false,
+      'net': false,
+      'nock': false,
+      'aws-sdk': false,
+      'mock-aws-s3': false,
+    },
+  },
 }

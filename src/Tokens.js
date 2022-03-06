@@ -9,7 +9,7 @@ class Tokens {
   #terms
 
   constructor (tokens) {
-    this.#tokens = tokens || {}
+    this.#tokens = tokens
     this.#count = _.countBy(this.#tokens)
     this.#terms = _.keys(this.#count)
   }
@@ -53,11 +53,11 @@ class Tokens {
   }
 
   contains (term) {
-    return (this.#count[term] || 0) > 0
+    return this.#count[term] > 0
   }
 
   countOf (term) {
-    return this.#count[term] || 0
+    return this.#count[term]
   }
 
   descendingOrder () {
