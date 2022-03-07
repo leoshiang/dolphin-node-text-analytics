@@ -35,7 +35,7 @@ function tfidf (tokenizationResults) {
       }
       tf.set(row, column, value / sumOfEachResult[column])
     }
-    idf.set(row, 0, Math.log(tokenizationResults.length / (numberOfDocuments + 1)))
+    idf.set(row, 0, 1 + Math.log((tokenizationResults.length + 1) / (numberOfDocuments + 1)))
   })
 
   let tfidf = new Matrix(_.keys(terms).length, tokenizationResults.length)
