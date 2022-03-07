@@ -25,6 +25,7 @@ describe('測試 loadDocumentsFromExcel', function () {
        .loadDocumentsFromExcel(fileName)
        .calculateTFIDF()
        .exportTFIDFToCsv('./tfidf.csv')
+       .exportTFIDFToExcel('./tfidf.xlsx')
 
     try {
       fs.unlinkSync(fileName)

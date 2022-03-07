@@ -2,6 +2,7 @@ const { DocumentCollection } = require('./DocumentCollection')
 const { Tokenizer } = require('./Tokenizer')
 const TFIDF = require('./TFIDF')
 const { TFIDFResultCsvExporter } = require('./TFIDFResultCsvExporter')
+const { TFIDFResultExcelExporter } = require('./TFIDFResultExcelExporter')
 const { Jieba } = require('./Jieba')
 
 class NLP {
@@ -32,6 +33,11 @@ class NLP {
 
   exportTFIDFToCsv (fileName) {
     TFIDFResultCsvExporter.export(this.#tfidfResult, this.#tokenizationResults, fileName)
+    return this
+  }
+
+  exportTFIDFToExcel (fileName) {
+    TFIDFResultExcelExporter.export(this.#tfidfResult, this.#tokenizationResults, fileName)
     return this
   }
 
