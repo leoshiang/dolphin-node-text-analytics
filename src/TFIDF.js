@@ -1,52 +1,59 @@
 const _ = require('lodash')
-const fs = require('fs')
+const { Matrix } = require('node-dolphin')
+const { TFIDFResult } = require('./TFIDFResult')
 
-function getAllTerms (tokensArray) {
-  let result = {}
-  for (let t = 0; t < tokensArray.length; t++) {
-    result = _.union(result, tokensArray[t].terms)
-  }
-  return result
-}
-
-function tf (term, tokens) {
-  return tokens.countOf(term) / tokens.totalCount
-}
-
-function idf (term, tokensArray) {
-  let n = tokensArray.filter(x => x.contains(term)).length
-  if (n === 0) {
-    n = 1
-  }
-  return Math.log(tokensArray.length / n)
-}
-
-function tfidf (tokensArray) {
-  let matrix = {}
-  let allTerms = getAllTerms(tokensArray)
-  allTerms.forEach(key => {
-    let row = []
-    let idfValue = idf(key, tokensArray)
-    tokensArray.forEach(t => {
-      let tfidf = tf(key, t) * idfValue
-      row.push(tfidf)
+/**
+ *
+ * @param {TokenizationResult[]} tokenizationResults
+ * @return {TFIDFResult}
+ */
+function tfidf (tokenizationResults) {
+  let termCount = {}
+  let sumOfEachResult = new Array(tokenizationResults.length).fill(0)
+  tokenizationResults.forEach((tokenizationResult, column) => {
+    let count = tokenizationResult.count
+    let terms = _.keys(count)
+    terms.forEach(term => {
+      if (!termCount[term]) {
+        termCount[term] = new Array(tokenizationResults.length).fill(0)
+      }
+      let value = count[term]
+      termCount[term][column] += value
+      sumOfEachResult[column] += value
     })
-    matrix[key] = row
   })
-  return matrix
-}
 
-function dump_tfidf (matrix) {
-  fs.writeFileSync('./output.log', '', { flag: 'w+' })
-  Object.keys(matrix).forEach(row => {
-    let output = matrix[row].reduce((acc, prev) => acc + prev + ' ', row + ' ')
-    fs.writeFileSync('./output.log', output+'\r\n', { flag: 'a' })
+  let terms = _.keys(termCount)
+  let idf = new Matrix(_.keys(terms).length, 1)
+  let tf = new Matrix(_.keys(terms).length, tokenizationResults.length)
+  terms.forEach((term, row) => {
+    let numberOfDocuments = 0
+    for (let column = 0; column < tokenizationResults.length; column++) {
+      let value = termCount[term][column]
+      if (value > 0) {
+        numberOfDocuments++
+      }
+      tf.set(row, column, value / sumOfEachResult[column])
+    }
+    idf.set(row, 0, Math.log(tokenizationResults.length / (numberOfDocuments + 1)))
   })
+
+  let tfidf = new Matrix(_.keys(terms).length, tokenizationResults.length)
+  terms.forEach((term, row) => {
+    for (let column = 0; column < tokenizationResults.length; column++) {
+      let tt = idf.get(row, 0) * tf.get(row, column)
+      tfidf.set(row, column, tt)
+    }
+  })
+
+  return new TFIDFResult({
+                           tf: tf,
+                           idf: idf,
+                           tfidf: tfidf,
+                           terms: terms,
+                         })
 }
 
 module.exports = {
-  tf,
-  idf,
   tfidf,
-  dump_tfidf,
 }

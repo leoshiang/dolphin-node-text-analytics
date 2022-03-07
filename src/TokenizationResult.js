@@ -3,10 +3,10 @@ const _ = require('lodash')
 /**
  * @class
  */
-class Tokens {
+class TokenizationResult {
   #count
-  #tokens
   #terms
+  #tokens
 
   constructor (tokens) {
     this.#tokens = tokens
@@ -14,20 +14,20 @@ class Tokens {
     this.#terms = _.keys(this.#count)
   }
 
-  get tokens () {
-    return this.#tokens
-  }
-
   get count () {
     return this.#count
   }
 
-  get totalCount () {
-    return _.keys(this.#count).reduce((acc, curr) => acc + this.#count[curr], 0)
-  }
-
   get terms () {
     return this.#terms
+  }
+
+  get tokens () {
+    return this.#tokens
+  }
+
+  get totalCount () {
+    return _.keys(this.#count).reduce((acc, curr) => acc + this.#count[curr], 0)
   }
 
   #sort (compareFunction) {
@@ -92,4 +92,4 @@ class Tokens {
   }
 }
 
-module.exports = { Tokens }
+module.exports = { Tokens: TokenizationResult }

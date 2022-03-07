@@ -1,6 +1,5 @@
 const { Jieba } = require('./Jieba')
-const { Tokens } = require('./Tokens')
-const FoodServiceDataSet = require('./FoodServicesDataset')
+const { Tokens } = require('./TokenizationResult')
 
 /**
  * @class
@@ -12,7 +11,7 @@ class Tokenizer {
     return new Tokens(terms.filter(x => x !== ' '))
   }
 
-  static parseCollection (collection) {
+  static parseDocuments (collection) {
     let result = []
     collection.forEach(document => result.push(this.parseDocument(document)))
     return result

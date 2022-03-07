@@ -41,7 +41,6 @@ describe('測試 countOf', function () {
     mock.restore()
 
     let tokens = Tokenizer.parseDocument(document)
-    tokens.dump()
     expect(tokens.countOf('麻辣')).toBe(14)
     expect(tokens.countOf('蛤蜊')).toBe(4)
   })
@@ -112,7 +111,7 @@ describe('測試 top', function () {
     document.loadFromFile('./docs/some-file.txt')
     mock.restore()
 
-    let lowest3 = Tokenizer.parseDocument(document).ascendingOrder().dump().top(3)
+    let lowest3 = Tokenizer.parseDocument(document).ascendingOrder().top(3)
     expect(lowest3[0].term).toBe('通')
     expect(lowest3[1].term).toBe('心得')
     expect(lowest3[2].term).toBe('聽')

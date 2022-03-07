@@ -22,14 +22,14 @@ class DocumentCollection {
     return this
   }
 
-  loadFromWorkBook (workbook) {
-    let documents = ExcelReader.loadDocumentsFromWorkBook(workbook)
-    this.#documents = this.#documents.concat(documents)
+  loadFromFile (fileName) {
+    this.#documents.push(new Document().loadFromFile(fileName))
     return this
   }
 
-  loadFromFile (fileName) {
-    this.#documents.push(new Document().loadFromFile(fileName))
+  loadFromWorkBook (workbook) {
+    let documents = ExcelReader.loadDocumentsFromWorkBook(workbook)
+    this.#documents = this.#documents.concat(documents)
     return this
   }
 }

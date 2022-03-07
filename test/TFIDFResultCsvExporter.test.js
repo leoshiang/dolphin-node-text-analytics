@@ -5,6 +5,7 @@ const { DocumentCollection } = require('../src/DocumentCollection')
 const Jieba = require('../src/Jieba')
 const fs = require('fs')
 const os = require('os')
+const { TFIDFResultCsvExporter } = require('../src/TFIDFResultCsvExporter')
 
 describe('測試 tfidf', () => {
   test('測試 FoodServicesDataset', () => {
@@ -27,9 +28,13 @@ describe('測試 tfidf', () => {
     const dc = new DocumentCollection().loadFromWorkBook(FoodServiceDataset.ExcelWorkbook)
     const tokenizationResults = Tokenizer.parseDocuments(dc)
     const result = TFIDF.tfidf(tokenizationResults)
-    expect(result.getIDF('滷肉飯', tokenizationResults)).toBe(0.0019193857965451055)
+    TFIDFResultCsvExporter.export(result, './tfidf.txt')
 
-    fs.unlinkSync(userDictFileName)
-    fs.unlinkSync(stopWordsFileName)
+    try {
+      fs.unlinkSync(userDictFileName)
+      fs.unlinkSync(stopWordsFileName)
+    } catch (e) {
+
+    }
   })
 })
