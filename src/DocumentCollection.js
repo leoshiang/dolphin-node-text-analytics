@@ -1,5 +1,6 @@
 const { Document } = require('./Document')
 const ExcelReader = require('./ExcelReader')
+const Path = require('path')
 
 class DocumentCollection {
   #documents
@@ -22,12 +23,19 @@ class DocumentCollection {
     return this
   }
 
-  loadFromFile (fileName) {
-    this.#documents.push(new Document().loadFromFile(fileName))
+  loadDocumentFromFile (fileName) {
+    const name = Path.basename(fileName)
+    this.#documents.push(new Document(name).loadFromTextFile(fileName))
     return this
   }
 
-  loadFromWorkBook (workbook) {
+  loadDocumentsFromExcel (filename) {
+    let documents = ExcelReader.loadDocumentsFromExcel(filename)
+    this.#documents = this.#documents.concat(documents)
+    return this
+  }
+
+  loadDocumentsFromWorkBook (workbook) {
     let documents = ExcelReader.loadDocumentsFromWorkBook(workbook)
     this.#documents = this.#documents.concat(documents)
     return this

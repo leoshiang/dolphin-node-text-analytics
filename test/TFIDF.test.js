@@ -24,7 +24,7 @@ describe('測試 tfidf', () => {
                       userDict: userDictFileName,
                       stopWordDict: stopWordsFileName,
                     })
-    const dc = new DocumentCollection().loadFromWorkBook(FoodServiceDataset.ExcelWorkbook)
+    const dc = new DocumentCollection().loadDocumentsFromWorkBook(FoodServiceDataset.ExcelWorkbook)
     const tokenizationResults = Tokenizer.parseDocuments(dc)
     const result = TFIDF.tfidf(tokenizationResults)
     expect(result.getIDF('滷肉飯', tokenizationResults)).toBe(0.0019193857965451055)

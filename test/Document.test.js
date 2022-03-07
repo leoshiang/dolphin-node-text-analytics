@@ -105,7 +105,7 @@ describe('測試 length', function () {
            },
          })
 
-    let document = new Document().loadFromFile('./docs/some-file.txt')
+    let document = new Document().loadFromTextFile('./docs/some-file.txt')
     mock.restore()
     expect(document.length).toBe(847)
   })
@@ -119,7 +119,7 @@ describe('測試 loadFromFile', function () {
            },
          })
     let document = new Document()
-    expect(document.loadFromFile('./docs/a.txt')).toBe(document)
+    expect(document.loadFromTextFile('./docs/a.txt')).toBe(document)
     mock.restore()
   })
 
@@ -130,7 +130,7 @@ describe('測試 loadFromFile', function () {
            },
          })
     let document = new Document()
-    document.loadFromFile('./docs/some-file.txt')
+    document.loadFromTextFile('./docs/some-file.txt')
     mock.restore()
     const expected = FoodServiceDataset.SingleDocument.split('\r\n')
                                        .reduce((acc, curr) => acc + curr, '')
@@ -147,8 +147,8 @@ describe('測試 loadFromFile', function () {
          })
 
     let document = new Document()
-    document.loadFromFile('./docs/document1.txt')
-    document.loadFromFile('./docs/document2.txt')
+    document.loadFromTextFile('./docs/document1.txt')
+    document.loadFromTextFile('./docs/document2.txt')
     mock.restore()
 
     const doc1 = FoodServiceDataset.Document1.split('\r\n')
@@ -168,7 +168,7 @@ describe('測試 loadFromFile', function () {
          })
 
     let document = new Document()
-    expect(document.loadFromFile('./docs/some-file.txt')).toBe(document)
+    expect(document.loadFromTextFile('./docs/some-file.txt')).toBe(document)
 
     mock.restore()
   })

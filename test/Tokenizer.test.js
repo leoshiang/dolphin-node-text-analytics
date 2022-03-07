@@ -13,7 +13,7 @@ describe('測試 fromDocument', function () {
          })
 
     let document = new Document()
-    document.loadFromFile('./docs/some-file.txt')
+    document.loadFromTextFile('./docs/some-file.txt')
     mock.restore()
 
     let tokens = Tokenizer.parseDocument(document)
@@ -37,7 +37,7 @@ describe('測試 countOf', function () {
          })
 
     let document = new Document()
-    document.loadFromFile('./docs/some-file.txt')
+    document.loadFromTextFile('./docs/some-file.txt')
     mock.restore()
 
     let tokens = Tokenizer.parseDocument(document)
@@ -55,7 +55,7 @@ describe('測試 totalCount', function () {
          })
 
     let document = new Document()
-    document.loadFromFile('./docs/some-file.txt')
+    document.loadFromTextFile('./docs/some-file.txt')
     mock.restore()
 
     let tokens = Tokenizer.parseDocument(document)
@@ -72,7 +72,7 @@ describe('測試 terms', function () {
          })
 
     let document = new Document()
-    document.loadFromFile('./docs/some-file.txt')
+    document.loadFromTextFile('./docs/some-file.txt')
     mock.restore()
 
     let tokens = Tokenizer.parseDocument(document)
@@ -89,7 +89,7 @@ describe('測試 descendingOrder', function () {
          })
 
     let document = new Document()
-    document.loadFromFile('./docs/some-file.txt')
+    document.loadFromTextFile('./docs/some-file.txt')
     mock.restore()
 
     let least3 = Tokenizer.parseDocument(document).descendingOrder().least(3)
@@ -108,7 +108,7 @@ describe('測試 top', function () {
          })
 
     let document = new Document()
-    document.loadFromFile('./docs/some-file.txt')
+    document.loadFromTextFile('./docs/some-file.txt')
     mock.restore()
 
     let lowest3 = Tokenizer.parseDocument(document).ascendingOrder().top(3)

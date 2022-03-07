@@ -1,5 +1,4 @@
 const xlsx = require('xlsx')
-const excel = require('xlsx')
 const { Document } = require('./Document')
 
 function createDocumentFromWorksheet (worksheet, name) {
@@ -29,7 +28,7 @@ function loadDocumentsFromWorkBook (workbook) {
  * @return {Document[]}
  */
 function loadDocumentsFromExcel (fileName) {
-  return loadDocumentsFromWorkBook(excel.readFile(fileName))
+  return loadDocumentsFromWorkBook(xlsx.readFile(fileName))
 }
 
 module.exports = {

@@ -5,10 +5,17 @@ const _ = require('lodash')
  */
 class TokenizationResult {
   #count
+  #document
   #terms
   #tokens
 
-  constructor (tokens) {
+  /**
+   *
+   * @param {Document} document
+   * @param tokens
+   */
+  constructor (document, tokens) {
+    this.#document = document
     this.#tokens = tokens
     this.#count = _.countBy(this.#tokens)
     this.#terms = _.keys(this.#count)
@@ -16,6 +23,10 @@ class TokenizationResult {
 
   get count () {
     return this.#count
+  }
+
+  get document () {
+    return this.#document
   }
 
   get terms () {
@@ -92,4 +103,4 @@ class TokenizationResult {
   }
 }
 
-module.exports = { Tokens: TokenizationResult }
+module.exports = { TokenizationResult }

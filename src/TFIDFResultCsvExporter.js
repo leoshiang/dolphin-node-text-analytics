@@ -1,19 +1,26 @@
-const fs = require('fs')
+const { TextFile } = require('node-dolphin')
 
 class TFIDFResultCsvExporter {
 
   /**
    *
-   * @param {TFIDFResult} result
-   * @param {string} fileName
+   * @param {TFIDFResult} tfidfResult TFIDF 產出的結果。
+   * @param {TokenizationResult[]} tokenizationResults
+   * @param {string} fileName 檔案名稱。
    */
-  static export (result, fileName) {
-    fs.writeFileSync(fileName, '', { flag: 'w+' })
-    result.terms.forEach((term, rowIndex) => {
-      fs.writeFileSync(fileName, term + ',', { flag: 'a' })
-      let row = result.tfidf.row(rowIndex)
+  static export (tfidfResult, tokenizationResults, fileName) {
+    let output = new TextFile().rewrite(fileName)
+    output.write('term')
+    tokenizationResults.forEach(t => {
+      output.write(',' + t.document.name)
+    })
+    output.writeLine('')
+
+    tfidfResult.terms.forEach((term, rowIndex) => {
+      output.write(term + ',')
+      let row = tfidfResult.tfidf.row(rowIndex)
       let rowText = String(row)
-      fs.writeFileSync(fileName, rowText + '\r\n', { flag: 'a' })
+      output.writeLine(rowText)
     })
   }
 }

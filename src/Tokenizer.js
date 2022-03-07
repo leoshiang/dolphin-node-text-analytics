@@ -1,5 +1,5 @@
 const { Jieba } = require('./Jieba')
-const { Tokens } = require('./TokenizationResult')
+const { TokenizationResult } = require('./TokenizationResult')
 
 /**
  * @class
@@ -7,8 +7,8 @@ const { Tokens } = require('./TokenizationResult')
 class Tokenizer {
 
   static parseDocument (document) {
-    let terms = Jieba.cut(document.asString())
-    return new Tokens(terms.filter(x => x !== ' '))
+    let terms = Jieba.cut(document.asString()).filter(x => x !== ' ')
+    return new TokenizationResult(document, terms)
   }
 
   static parseDocuments (collection) {

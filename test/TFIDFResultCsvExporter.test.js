@@ -25,10 +25,10 @@ describe('測試 tfidf', () => {
                       userDict: userDictFileName,
                       stopWordDict: stopWordsFileName,
                     })
-    const dc = new DocumentCollection().loadFromWorkBook(FoodServiceDataset.ExcelWorkbook)
+    const dc = new DocumentCollection().loadDocumentsFromWorkBook(FoodServiceDataset.ExcelWorkbook)
     const tokenizationResults = Tokenizer.parseDocuments(dc)
-    const result = TFIDF.tfidf(tokenizationResults)
-    TFIDFResultCsvExporter.export(result, './tfidf.txt')
+    const tfidfResult = TFIDF.tfidf(tokenizationResults)
+    TFIDFResultCsvExporter.export(tfidfResult, tokenizationResults, './tfidf.txt')
 
     try {
       fs.unlinkSync(userDictFileName)

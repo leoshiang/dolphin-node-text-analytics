@@ -12,5 +12,5 @@ function initJieba (config) {
 
 module.exports = {
   initJieba,
-  Jieba
+  Jieba,
 }

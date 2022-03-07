@@ -76,7 +76,7 @@ class Document {
    */
   addText (text) {
     if (Type.isString(text) && text !== '') {
-       this.#lines.push(text)
+      this.#lines.push(text)
     }
     return this
   }
@@ -105,7 +105,7 @@ class Document {
    * @param {string} encoding 編碼，預設值為 'utf8'。
    * @return {Document}
    */
-  loadFromFile (fileName, encoding = 'utf8') {
+  loadFromTextFile (fileName, encoding = 'utf8') {
     if (!fs.existsSync(fileName)) {
       return this
     }
