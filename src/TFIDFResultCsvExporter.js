@@ -18,7 +18,7 @@ class TFIDFResultCsvExporter {
 
     tfidfResult.terms.forEach((term, rowIndex) => {
       output.write(term + ',')
-      let row = tfidfResult.tfidf.row(rowIndex)
+      let row = tfidfResult.tfidf[rowIndex]
       let rowText = String(row)
       output.writeLine(rowText)
     })

@@ -33,17 +33,17 @@ class TFIDFResult {
 
   getIDF (term) {
     let row = this.#getIndexOfTerm(term)
-    return this.#tf.get(row, 0)
+    return this.#tf[row][0]
   }
 
   getTF (term, documentIndex) {
     let row = this.#getIndexOfTerm(term)
-    return this.#tf.get(row, documentIndex)
+    return this.#tf[row][documentIndex]
   }
 
   getTFIDF (term, documentIndex) {
     let row = this.#getIndexOfTerm(term)
-    return this.#tfidf.get(row, documentIndex)
+    return this.#tfidf[row][documentIndex]
   }
 }
 

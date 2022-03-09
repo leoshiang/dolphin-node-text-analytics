@@ -33,6 +33,7 @@ describe('測試 tfidf', () => {
     try {
       fs.unlinkSync(userDictFileName)
       fs.unlinkSync(stopWordsFileName)
+      fs.unlinkSync('./tfidf.txt')
     } catch (e) {
 
     }

@@ -7,7 +7,7 @@
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> TFIDF.js</title>
+  <title> DocumentCollection.js</title>
 
   <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -76,7 +76,7 @@
             <div class="content">
                 <header class="page-title">
                     <p>Source</p>
-                    <h1>TFIDF.js</h1>
+                    <h1>DocumentCollection.js</h1>
                 </header>
                 
 
@@ -85,63 +85,94 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const _ = require('lodash')
-const { Matrix } = require('node-dolphin')
-const { TFIDFResult } = require('./TFIDFResult')
+            <pre class="prettyprint source linenums"><code>const { Document } = require('./Document')
+const ExcelReader = require('./ExcelReader')
+const Path = require('path')
 
 /**
- *
- * @param {TokenizationResult[]} tokenizationResults
- * @return {TFIDFResult}
+ * 此回呼函數會在 forEach 執行被呼叫。
+ * @callback DocumentCollection~forEachCallback
+ * @param {Document} document 文件。
+ * @param {number} index 編號，從 0 開始。
  */
-function tfidf (tokenizationResults) {
-  let termCount = {}
-  let sumOfEachResult = new Array(tokenizationResults.length).fill(0)
-  tokenizationResults.forEach((tokenizationResult, column) => {
-    let count = tokenizationResult.count
-    let terms = _.keys(count)
-    terms.forEach(term => {
-      if (!termCount[term]) {
-        termCount[term] = new Array(tokenizationResults.length).fill(0)
-      }
-      let value = count[term]
-      termCount[term][column] += value
-      sumOfEachResult[column] += value
-    })
-  })
 
-  let terms = _.keys(termCount)
-  let idf = new Matrix(_.keys(terms).length, 1)
-  let tf = new Matrix(_.keys(terms).length, tokenizationResults.length)
-  terms.forEach((term, row) => {
-    let numberOfDocuments = 0
-    for (let column = 0; column &lt; tokenizationResults.length; column++) {
-      let value = termCount[term][column]
-      if (value > 0) {
-        numberOfDocuments++
-      }
-      tf[row][column] = value / sumOfEachResult[column]
-    }
-    idf[row][0] = 1 + Math.log((tokenizationResults.length + 1) / (numberOfDocuments + 1))
-  })
+/**
+ * @class
+ * @classdesc 文件集合。
+ */
+class DocumentCollection {
+  #documents
 
-  let tfidf = new Matrix(_.keys(terms).length, tokenizationResults.length)
-  terms.forEach((term, row) => {
-    for (let column = 0; column &lt; tokenizationResults.length; column++) {
-      tfidf[row][column] = idf[row][0] * tf[row][column]
-    }
-  })
+  /**
+   * @constructor
+   */
+  constructor () {
+    this.clear()
+  }
 
-  return new TFIDFResult({
-                           tf: tf,
-                           idf: idf,
-                           tfidf: tfidf,
-                           terms: terms,
-                         })
+  /**
+   * 文件集合裡面有幾份文件。
+   * @return {number}
+   */
+  get length () {
+    return this.#documents.length
+  }
+
+  /**
+   * 清除文件內容。
+   * @return {DocumentCollection}
+   */
+  clear () {
+    this.#documents = []
+    return this
+  }
+
+  /**
+   * 遍歷每一份文件。
+   * @param {DocumentCollection~forEachCallback} callback 文件和編號會傳入 callback。
+   * @return {DocumentCollection}
+   */
+  forEach (callback) {
+    this.#documents.forEach((document, index) => callback(document, index))
+    return this
+  }
+
+  /**
+   * 從文字檔載入文件。
+   * @param {string} fileName 檔案名稱。
+   * @return {DocumentCollection}
+   */
+  loadDocumentFromFile (fileName) {
+    const name = Path.basename(fileName)
+    this.#documents.push(new Document(name).loadFromTextFile(fileName))
+    return this
+  }
+
+  /**
+   * 從 Excel 檔案載入文件，每一個 worksheet 會被視為一份文件。
+   * @param {string} filename 檔案名稱。
+   * @return {DocumentCollection}
+   */
+  loadDocumentsFromExcel (filename) {
+    let documents = ExcelReader.loadDocumentsFromExcel(filename)
+    this.#documents = this.#documents.concat(documents)
+    return this
+  }
+
+  /**
+   * 從 workbook 物件載入文件，每一個 worksheet 會被視為一份文件。
+   * @param {WorkBook} workbook 使用 xlsx 套件 read 函數取得的物件。
+   * @return {DocumentCollection}
+   */
+  loadDocumentsFromWorkBook (workbook) {
+    let documents = ExcelReader.loadDocumentsFromWorkBook(workbook)
+    this.#documents = this.#documents.concat(documents)
+    return this
+  }
 }
 
 module.exports = {
-  tfidf,
+  DocumentCollection: DocumentCollection,
 }
 </code></pre>
         </article>

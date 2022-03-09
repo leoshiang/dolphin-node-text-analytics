@@ -66,7 +66,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Document.html">Document</a></li><li><a href="TokenizationResult.html">TokenizationResult</a></li><li><a href="Tokenizer.html">Tokenizer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#initJieba">initJieba</a></li><li><a href="global.html#loadDocumentsFromExcel">loadDocumentsFromExcel</a></li><li><a href="global.html#loadDocumentsFromWorkBook">loadDocumentsFromWorkBook</a></li><li><a href="global.html#tfidf">tfidf</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Document.html">Document</a></li><li><a href="DocumentCollection.html">DocumentCollection</a></li><li><a href="TokenizationResult.html">TokenizationResult</a></li><li><a href="Tokenizer.html">Tokenizer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createDocumentFromWorksheet">createDocumentFromWorksheet</a></li><li><a href="global.html#initJieba">initJieba</a></li><li><a href="global.html#loadDocumentsFromExcel">loadDocumentsFromExcel</a></li><li><a href="global.html#loadDocumentsFromWorkBook">loadDocumentsFromWorkBook</a></li><li><a href="global.html#tfidf">tfidf</a></li></ul></div>
                 
             </nav>
         </div>
@@ -155,6 +155,202 @@
         <div class='vertical-section'>
             <h1>Methods</h1>
             <div class="members">
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="createDocumentFromWorksheet">
+        <a class="href-link" href="#createDocumentFromWorksheet">#</a>
+        
+        <span class="code-name">
+            
+                createDocumentFromWorksheet<span class="signature">(worksheet, name)</span><span class="type-signature"> &rarr; {<a href="Document.html">Document</a>}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        讀取 worksheet 內容建立 Document。
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-container">
+    <table class="params table">
+        <thead>
+        <tr>
+            
+            <th>Name</th>
+            
+
+            <th>Type</th>
+
+            
+
+            
+
+            <th class="last">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>worksheet</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Worksheet</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">工作表。</td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>name</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">string</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">文件名稱。</td>
+</tr>
+
+
+        
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="ExcelReader.js.html" class="button">View Source</a>
+            <span>
+                <a href="ExcelReader.js.html">ExcelReader.js</a>, <a href="ExcelReader.js.html#line10">line 10</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<code class="param-type"><a href="Document.html">Document</a></code>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
             
                 <div class="member">
 
@@ -272,7 +468,7 @@
         <p class="tag-source">
             <a href="Jieba.js.html" class="button">View Source</a>
             <span>
-                <a href="Jieba.js.html">Jieba.js</a>, <a href="Jieba.js.html#line9">line 9</a>
+                <a href="Jieba.js.html">Jieba.js</a>, <a href="Jieba.js.html#line7">line 7</a>
             </span>
         </p>
     
@@ -415,7 +611,7 @@
         <p class="tag-source">
             <a href="ExcelReader.js.html" class="button">View Source</a>
             <span>
-                <a href="ExcelReader.js.html">ExcelReader.js</a>, <a href="ExcelReader.js.html#line30">line 30</a>
+                <a href="ExcelReader.js.html">ExcelReader.js</a>, <a href="ExcelReader.js.html#line36">line 36</a>
             </span>
         </p>
     
@@ -586,7 +782,7 @@
         <p class="tag-source">
             <a href="ExcelReader.js.html" class="button">View Source</a>
             <span>
-                <a href="ExcelReader.js.html">ExcelReader.js</a>, <a href="ExcelReader.js.html#line15">line 15</a>
+                <a href="ExcelReader.js.html">ExcelReader.js</a>, <a href="ExcelReader.js.html#line21">line 21</a>
             </span>
         </p>
     

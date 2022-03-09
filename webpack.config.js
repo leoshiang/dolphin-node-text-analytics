@@ -40,6 +40,7 @@ module.exports = {
       'nock': false,
       'aws-sdk': false,
       'mock-aws-s3': false,
+      'http': false,
     },
   },
 }

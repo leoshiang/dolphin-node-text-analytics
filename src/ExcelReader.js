@@ -1,6 +1,12 @@
 const xlsx = require('xlsx')
 const { Document } = require('./Document')
 
+/**
+ * 讀取 worksheet 內容建立 Document。
+ * @param {Worksheet} worksheet 工作表。
+ * @param {string} name 文件名稱。
+ * @return {Document}
+ */
 function createDocumentFromWorksheet (worksheet, name) {
   let rawLines = xlsx.utils.sheet_to_json(worksheet, { header: 1 })
   let lines = rawLines.map(x => x[0]).filter(x => x.length > 0)

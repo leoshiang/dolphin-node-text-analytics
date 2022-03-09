@@ -3,6 +3,7 @@ const { Type } = require('node-dolphin')
 
 /**
  * @class
+ * @classdesc 文件。
  */
 class Document {
   #lines

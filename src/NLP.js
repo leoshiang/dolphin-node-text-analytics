@@ -5,19 +5,21 @@ const { TFIDFResultCsvExporter } = require('./TFIDFResultCsvExporter')
 const { TFIDFResultExcelExporter } = require('./TFIDFResultExcelExporter')
 const { Jieba } = require('./Jieba')
 const fs = require('fs')
+const { Type } = require('node-dolphin')
 
 class NLP {
 
   #documentCollection
+  #stopWords
   #stopWordsFileName
   #tfidfResult
   #tokenizationResults
   #userDictionaryFileName
-  #stopWords
 
   constructor () {
     this.#documentCollection = new DocumentCollection()
     this.#stopWords = []
+    this.#tfidfResult = {}
   }
 
   get documentCollection () {
@@ -33,6 +35,12 @@ class NLP {
       })
   }
 
+  #makeSureTfidfHasBeenExecuted () {
+    if ((this.#tfidfResult === {}) || Type.isUndefined(this.#tokenizationResults)) {
+      throw new Error('尚未執行 TFIDF!')
+    }
+  }
+
   calculateTFIDF () {
     Jieba.load({
                  userDict: this.#userDictionaryFileName,
@@ -45,11 +53,13 @@ class NLP {
   }
 
   exportTFIDFToCsv (fileName) {
+    this.#makeSureTfidfHasBeenExecuted()
     TFIDFResultCsvExporter.export(this.#tfidfResult, this.#tokenizationResults, fileName)
     return this
   }
 
   exportTFIDFToExcel (fileName) {
+    this.#makeSureTfidfHasBeenExecuted()
     TFIDFResultExcelExporter.export(this.#tfidfResult, this.#tokenizationResults, fileName)
     return this
   }

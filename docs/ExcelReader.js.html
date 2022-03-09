@@ -68,7 +68,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Document.html">Document</a></li><li><a href="TokenizationResult.html">TokenizationResult</a></li><li><a href="Tokenizer.html">Tokenizer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#initJieba">initJieba</a></li><li><a href="global.html#loadDocumentsFromExcel">loadDocumentsFromExcel</a></li><li><a href="global.html#loadDocumentsFromWorkBook">loadDocumentsFromWorkBook</a></li><li><a href="global.html#tfidf">tfidf</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Document.html">Document</a></li><li><a href="DocumentCollection.html">DocumentCollection</a></li><li><a href="TokenizationResult.html">TokenizationResult</a></li><li><a href="Tokenizer.html">Tokenizer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createDocumentFromWorksheet">createDocumentFromWorksheet</a></li><li><a href="global.html#initJieba">initJieba</a></li><li><a href="global.html#loadDocumentsFromExcel">loadDocumentsFromExcel</a></li><li><a href="global.html#loadDocumentsFromWorkBook">loadDocumentsFromWorkBook</a></li><li><a href="global.html#tfidf">tfidf</a></li></ul></div>
                 
             </nav>
         </div>
@@ -88,6 +88,12 @@
             <pre class="prettyprint source linenums"><code>const xlsx = require('xlsx')
 const { Document } = require('./Document')
 
+/**
+ * 讀取 worksheet 內容建立 Document。
+ * @param {Worksheet} worksheet 工作表。
+ * @param {string} name 文件名稱。
+ * @return {Document}
+ */
 function createDocumentFromWorksheet (worksheet, name) {
   let rawLines = xlsx.utils.sheet_to_json(worksheet, { header: 1 })
   let lines = rawLines.map(x => x[0]).filter(x => x.length > 0)

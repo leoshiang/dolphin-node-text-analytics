@@ -68,7 +68,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Document.html">Document</a></li><li><a href="TokenizationResult.html">TokenizationResult</a></li><li><a href="Tokenizer.html">Tokenizer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#initJieba">initJieba</a></li><li><a href="global.html#loadDocumentsFromExcel">loadDocumentsFromExcel</a></li><li><a href="global.html#loadDocumentsFromWorkBook">loadDocumentsFromWorkBook</a></li><li><a href="global.html#tfidf">tfidf</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Document.html">Document</a></li><li><a href="DocumentCollection.html">DocumentCollection</a></li><li><a href="TokenizationResult.html">TokenizationResult</a></li><li><a href="Tokenizer.html">Tokenizer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createDocumentFromWorksheet">createDocumentFromWorksheet</a></li><li><a href="global.html#initJieba">initJieba</a></li><li><a href="global.html#loadDocumentsFromExcel">loadDocumentsFromExcel</a></li><li><a href="global.html#loadDocumentsFromWorkBook">loadDocumentsFromWorkBook</a></li><li><a href="global.html#tfidf">tfidf</a></li></ul></div>
                 
             </nav>
         </div>
@@ -105,7 +105,7 @@ class TFIDFResultCsvExporter {
 
     tfidfResult.terms.forEach((term, rowIndex) => {
       output.write(term + ',')
-      let row = tfidfResult.tfidf.row(rowIndex)
+      let row = tfidfResult.tfidf[rowIndex]
       let rowText = String(row)
       output.writeLine(rowText)
     })
