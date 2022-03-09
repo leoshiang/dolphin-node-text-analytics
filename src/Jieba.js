@@ -1,7 +1,5 @@
 const Jieba = require('nodejieba')
 
-Jieba.load()
-
 /**
  *
  * @param {LoadOptions} config

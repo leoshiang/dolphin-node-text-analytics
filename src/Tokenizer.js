@@ -6,14 +6,16 @@ const { TokenizationResult } = require('./TokenizationResult')
  */
 class Tokenizer {
 
-  static parseDocument (document) {
-    let terms = Jieba.cut(document.asString()).filter(x => x !== ' ')
+  static parseDocument (document, stopWords = {}) {
+    let terms = Jieba.cut(document.asString()).filter(x => {
+      return (x !== ' ') && !stopWords[x]
+    })
     return new TokenizationResult(document, terms)
   }
 
-  static parseDocuments (collection) {
+  static parseDocuments (collection, stopWords) {
     let result = []
-    collection.forEach(document => result.push(this.parseDocument(document)))
+    collection.forEach(document => result.push(this.parseDocument(document, stopWords)))
     return result
   }
 }

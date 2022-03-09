@@ -20,8 +20,8 @@ describe('測試 loadDocumentsFromExcel', function () {
                      { flag: 'w+' })
 
     let nlp = new NLP()
-    nlp.loadUserDictionary(userDictFileName)
-       .loadStopWords(stopWordsFileName)
+    nlp.loadUserDictionaryFile(userDictFileName)
+       .loadStopWordsFile(stopWordsFileName)
        .loadDocumentsFromExcel(fileName)
        .calculateTFIDF()
        .exportTFIDFToCsv('./tfidf.csv')

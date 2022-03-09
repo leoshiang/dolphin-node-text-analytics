@@ -4,29 +4,42 @@ const TFIDF = require('./TFIDF')
 const { TFIDFResultCsvExporter } = require('./TFIDFResultCsvExporter')
 const { TFIDFResultExcelExporter } = require('./TFIDFResultExcelExporter')
 const { Jieba } = require('./Jieba')
+const fs = require('fs')
 
 class NLP {
 
   #documentCollection
-  #stopWords
+  #stopWordsFileName
   #tfidfResult
   #tokenizationResults
-  #userDictionary
+  #userDictionaryFileName
+  #stopWords
 
   constructor () {
     this.#documentCollection = new DocumentCollection()
+    this.#stopWords = []
   }
 
   get documentCollection () {
     return this.#documentCollection
   }
 
+  #loadStopWords () {
+    this.#stopWords = {}
+    fs.readFileSync(this.#stopWordsFileName, 'utf8')
+      .split('\r\n')
+      .forEach(x => {
+        this.#stopWords[x] = true
+      })
+  }
+
   calculateTFIDF () {
     Jieba.load({
-                 userDict: this.#userDictionary,
-                 stopWordDict: this.#stopWords,
+                 userDict: this.#userDictionaryFileName,
+                 stopWordDict: this.#stopWordsFileName,
                })
-    this.#tokenizationResults = Tokenizer.parseDocuments(this.#documentCollection)
+    this.#loadStopWords()
+    this.#tokenizationResults = Tokenizer.parseDocuments(this.#documentCollection, this.#stopWords)
     this.#tfidfResult = TFIDF.tfidf(this.#tokenizationResults)
     return this
   }
@@ -67,8 +80,8 @@ class NLP {
    * @param {string} fileName 檔案名稱。
    * @return {NLP}
    */
-  loadStopWords (fileName) {
-    this.#stopWords = fileName
+  loadStopWordsFile (fileName) {
+    this.#stopWordsFileName = fileName
     return this
   }
 
@@ -77,8 +90,8 @@ class NLP {
    * @param {string} fileName 檔案名稱。
    * @return {NLP}
    */
-  loadUserDictionary (fileName) {
-    this.#userDictionary = fileName
+  loadUserDictionaryFile (fileName) {
+    this.#userDictionaryFileName = fileName
     return this
   }
 }
