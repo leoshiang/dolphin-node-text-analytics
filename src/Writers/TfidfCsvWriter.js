@@ -1,14 +1,11 @@
 const { TextFile } = require('node-dolphin')
 
-class TFIDFResultCsvExporter {
+class TfidfCsvWriter {
 
-  /**
-   *
-   * @param {TFIDFResult} tfidfResult TFIDF 產出的結果。
-   * @param {TokenizationResult[]} tokenizationResults
-   * @param {string} fileName 檔案名稱。
-   */
-  static export (tfidfResult, tokenizationResults, fileName) {
+  static export ({
+    tfidfResult,
+    tokenizationResults,
+  }, fileName) {
     let output = new TextFile().rewrite(fileName)
     output.write('term')
     tokenizationResults.forEach(t => {
@@ -25,4 +22,4 @@ class TFIDFResultCsvExporter {
   }
 }
 
-module.exports = { TFIDFResultCsvExporter }
+module.exports = { TfidfCsvWriter }

@@ -1,14 +1,11 @@
 const excel4node = require('excel4node')
 
-class TFIDFResultExcelExporter {
+class TfidfExcelWriter {
 
-  /**
-   *
-   * @param {TFIDFResult} tfidfResult TFIDF 產出的結果。
-   * @param {TokenizationResult[]} tokenizationResults
-   * @param {string} fileName 檔案名稱。
-   */
-  static export (tfidfResult, tokenizationResults, fileName) {
+  static export ({
+    tokenizationResults,
+    tfidfResult,
+  }, fileName) {
     const workbook = new excel4node.Workbook()
     const sheet1 = workbook.addWorksheet('tfidf')
     sheet1.cell(1, 1).string('term')
@@ -31,4 +28,4 @@ class TFIDFResultExcelExporter {
   }
 }
 
-module.exports = { TFIDFResultExcelExporter }
+module.exports = { TfidfExcelWriter }

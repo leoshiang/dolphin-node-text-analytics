@@ -8,6 +8,7 @@ class TokenizationResult {
   #document
   #terms
   #tokens
+  #totalCount
 
   /**
    *
@@ -19,6 +20,7 @@ class TokenizationResult {
     this.#tokens = tokens
     this.#count = _.countBy(this.#tokens)
     this.#terms = _.keys(this.#count)
+    this.#totalCount = _.keys(this.#count).reduce((acc, curr) => acc + this.#count[curr], 0)
   }
 
   get count () {
@@ -38,7 +40,7 @@ class TokenizationResult {
   }
 
   get totalCount () {
-    return _.keys(this.#count).reduce((acc, curr) => acc + this.#count[curr], 0)
+    return this.#totalCount
   }
 
   #sort (compareFunction) {

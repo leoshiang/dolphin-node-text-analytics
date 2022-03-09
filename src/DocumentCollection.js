@@ -1,6 +1,7 @@
 const { Document } = require('./Document')
 const ExcelReader = require('./ExcelReader')
 const Path = require('path')
+const { StrUtils } = require('node-dolphin')
 
 /**
  * 此回呼函數會在 forEach 執行被呼叫。
@@ -48,6 +49,15 @@ class DocumentCollection {
   forEach (callback) {
     this.#documents.forEach((document, index) => callback(document, index))
     return this
+  }
+
+  /**
+   * 計算詞彙同時出現在句子的行數。
+   * @param {*} terms 詞彙陣列，["new", "york"]
+   * @return {number}
+   */
+  contains (terms) {
+    return this.#documents.reduce((acc, curr) => acc + curr.contains(terms), 0)
   }
 
   /**

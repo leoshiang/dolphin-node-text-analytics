@@ -13,9 +13,9 @@ class Tokenizer {
     return new TokenizationResult(document, terms)
   }
 
-  static parseDocuments (collection, stopWords) {
+  static parseDocuments (documents, stopWords) {
     let result = []
-    collection.forEach(document => result.push(this.parseDocument(document, stopWords)))
+    documents.forEach(document => result.push(this.parseDocument(document, stopWords)))
     return result
   }
 }

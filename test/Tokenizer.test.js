@@ -2,7 +2,7 @@ const { Document } = require('../src/Document')
 const { Tokenizer } = require('../src/Tokenizer')
 const mock = require('mock-fs')
 const _ = require('lodash')
-const FoodServiceDataset = require('../src/FoodServicesDataset')
+const FoodServiceDataset = require('../src/DataSet/FoodServicesDataset')
 
 describe('測試 fromDocument', function () {
   test('傳入檔案名稱，count 應包含所有的檔案資料。', function () {

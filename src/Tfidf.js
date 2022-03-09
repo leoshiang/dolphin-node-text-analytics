@@ -1,12 +1,7 @@
 const _ = require('lodash')
 const { Matrix } = require('node-dolphin')
-const { TFIDFResult } = require('./TFIDFResult')
+const { TfidfResult } = require('./TfidfResult')
 
-/**
- *
- * @param {TokenizationResult[]} tokenizationResults
- * @return {TFIDFResult}
- */
 function tfidf (tokenizationResults) {
   let termCount = {}
   let sumOfEachResult = new Array(tokenizationResults.length).fill(0)
@@ -45,7 +40,7 @@ function tfidf (tokenizationResults) {
     }
   })
 
-  return new TFIDFResult({
+  return new TfidfResult({
                            tf: tf,
                            idf: idf,
                            tfidf: tfidf,

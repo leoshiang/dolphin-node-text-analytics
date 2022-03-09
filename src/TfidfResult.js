@@ -1,4 +1,4 @@
-class TFIDFResult {
+class TfidfResult {
   #idf
   #terms
   #tf
@@ -47,4 +47,4 @@ class TFIDFResult {
   }
 }
 
-module.exports = { TFIDFResult }
+module.exports = { TfidfResult }

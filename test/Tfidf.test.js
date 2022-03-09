@@ -1,5 +1,5 @@
-const FoodServiceDataset = require('../src/FoodServicesDataset')
-const TFIDF = require('../src/TFIDF')
+const FoodServiceDataset = require('../src/DataSet/FoodServicesDataset')
+const TFIDF = require('../src/Tfidf')
 const { Tokenizer } = require('../src/Tokenizer')
 const { DocumentCollection } = require('../src/DocumentCollection')
 const Jieba = require('../src/Jieba')

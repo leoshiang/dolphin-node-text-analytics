@@ -1,5 +1,5 @@
 const { DocumentCollection } = require('../src/DocumentCollection')
-const FoodServiceDataset = require('../src/FoodServicesDataset')
+const FoodServiceDataset = require('../src/DataSet/FoodServicesDataset')
 const mock = require('mock-fs')
 
 describe('載入 Excel', function () {

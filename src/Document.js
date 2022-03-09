@@ -1,5 +1,6 @@
 const fs = require('fs')
 const { Type } = require('node-dolphin')
+const { StrUtils } = require('node-dolphin')
 
 /**
  * @class
@@ -98,6 +99,16 @@ class Document {
     this.#name = ''
     this.#lines = []
     return this
+  }
+
+  /**
+   * 計算詞彙同時出現在句子的行數。
+   * @param {*} terms 詞彙陣列，["new", "york"]
+   * @return {*}
+   */
+  contains (terms) {
+    let x = this.lines.filter(line => StrUtils.contains(line, terms))
+    return x.length
   }
 
   /**

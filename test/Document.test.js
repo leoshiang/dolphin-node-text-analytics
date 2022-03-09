@@ -1,5 +1,5 @@
 const { Document } = require('../src/Document')
-const FoodServiceDataset = require('../src/FoodServicesDataset')
+const FoodServiceDataset = require('../src/DataSet/FoodServicesDataset')
 const mock = require('mock-fs')
 
 describe('測試 addLines', function () {

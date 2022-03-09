@@ -3,7 +3,7 @@ const { Document } = require('./src/Document')
 const { DocumentCollection } = require('./src/DocumentCollection')
 const { Tokenizer } = require('./src/Tokenizer')
 const { TFIDF } = require('./src/TFIDF')
-const { NLP } = require('./src/NLP')
+const { TextAnalytics } = require('./src/TextAnalytics')
 
 module.exports = {
   FoodServicesDataset,
@@ -11,5 +11,5 @@ module.exports = {
   DocumentCollection,
   Tokenizer,
   TFIDF,
-  NLP,
+  TextAnalytics,
 }

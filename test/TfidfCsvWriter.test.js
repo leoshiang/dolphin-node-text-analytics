@@ -1,11 +1,11 @@
-const FoodServiceDataset = require('../src/FoodServicesDataset')
+const FoodServiceDataset = require('../src/DataSet/FoodServicesDataset')
 const TFIDF = require('../src/TFIDF')
 const { Tokenizer } = require('../src/Tokenizer')
 const { DocumentCollection } = require('../src/DocumentCollection')
 const Jieba = require('../src/Jieba')
 const fs = require('fs')
 const os = require('os')
-const { TFIDFResultCsvExporter } = require('../src/TFIDFResultCsvExporter')
+const { TfidfCsvWriter } = require('../src/Writers/TfidfCsvWriter')
 
 describe('測試 tfidf', () => {
   test('測試 FoodServicesDataset', () => {
@@ -28,12 +28,15 @@ describe('測試 tfidf', () => {
     const dc = new DocumentCollection().loadDocumentsFromWorkBook(FoodServiceDataset.ExcelWorkbook)
     const tokenizationResults = Tokenizer.parseDocuments(dc)
     const tfidfResult = TFIDF.tfidf(tokenizationResults)
-    TFIDFResultCsvExporter.export(tfidfResult, tokenizationResults, './tfidf.txt')
+    TfidfCsvWriter.export({
+                            tfidfResult,
+                            tokenizationResults,
+                          }, './tfidf.txt')
 
     try {
       fs.unlinkSync(userDictFileName)
       fs.unlinkSync(stopWordsFileName)
-      fs.unlinkSync('./tfidf.txt')
+      fs.unlinkSync('./output/tfidf.txt')
     } catch (e) {
 
     }
