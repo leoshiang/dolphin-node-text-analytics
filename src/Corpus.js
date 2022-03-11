@@ -1,11 +1,10 @@
 const { Document } = require('./Document')
 const ExcelReader = require('./ExcelReader')
 const Path = require('path')
-const { StrUtils } = require('node-dolphin')
 
 /**
  * 此回呼函數會在 forEach 執行被呼叫。
- * @callback DocumentCollection~forEachCallback
+ * @callback Corpus~forEachCallback
  * @param {Document} document 文件。
  * @param {number} index 編號，從 0 開始。
  */
@@ -14,7 +13,7 @@ const { StrUtils } = require('node-dolphin')
  * @class
  * @classdesc 文件集合。
  */
-class DocumentCollection {
+class Corpus {
   #documents
 
   /**
@@ -34,7 +33,7 @@ class DocumentCollection {
 
   /**
    * 清除文件內容。
-   * @return {DocumentCollection}
+   * @return {Corpus}
    */
   clear () {
     this.#documents = []
@@ -43,8 +42,8 @@ class DocumentCollection {
 
   /**
    * 遍歷每一份文件。
-   * @param {DocumentCollection~forEachCallback} callback 文件和編號會傳入 callback。
-   * @return {DocumentCollection}
+   * @param {Corpus~forEachCallback} callback 文件和編號會傳入 callback。
+   * @return {Corpus}
    */
   forEach (callback) {
     this.#documents.forEach((document, index) => callback(document, index))
@@ -56,44 +55,44 @@ class DocumentCollection {
    * @param {*} terms 詞彙陣列，["new", "york"]
    * @return {number}
    */
-  contains (terms) {
-    return this.#documents.reduce((acc, curr) => acc + curr.contains(terms), 0)
+  numberOfLinesIncludes (terms) {
+    return this.#documents.reduce((acc, curr) => acc + curr.numberOfLinesIncludes(terms), 0)
+  }
+
+  /**
+   * 從 Excel 檔案載入文件，每一個 worksheet 會被視為一份文件。
+   * @param {string} filename 檔案名稱。
+   * @return {Corpus}
+   */
+  readExcel (filename) {
+    let documents = ExcelReader.readDocumentsFromExcel(filename)
+    this.#documents = this.#documents.concat(documents)
+    return this
   }
 
   /**
    * 從文字檔載入文件。
    * @param {string} fileName 檔案名稱。
-   * @return {DocumentCollection}
+   * @return {Corpus}
    */
-  loadDocumentFromFile (fileName) {
+  readTextFile (fileName) {
     const name = Path.basename(fileName)
     this.#documents.push(new Document(name).loadFromTextFile(fileName))
     return this
   }
 
   /**
-   * 從 Excel 檔案載入文件，每一個 worksheet 會被視為一份文件。
-   * @param {string} filename 檔案名稱。
-   * @return {DocumentCollection}
-   */
-  loadDocumentsFromExcel (filename) {
-    let documents = ExcelReader.loadDocumentsFromExcel(filename)
-    this.#documents = this.#documents.concat(documents)
-    return this
-  }
-
-  /**
    * 從 workbook 物件載入文件，每一個 worksheet 會被視為一份文件。
    * @param {WorkBook} workbook 使用 xlsx 套件 read 函數取得的物件。
-   * @return {DocumentCollection}
+   * @return {Corpus}
    */
-  loadDocumentsFromWorkBook (workbook) {
-    let documents = ExcelReader.loadDocumentsFromWorkBook(workbook)
+  readWorkBook (workbook) {
+    let documents = ExcelReader.readDocumentsFromWorkBook(workbook)
     this.#documents = this.#documents.concat(documents)
     return this
   }
 }
 
 module.exports = {
-  DocumentCollection: DocumentCollection,
+  Corpus,
 }

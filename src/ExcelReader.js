@@ -18,7 +18,7 @@ function createDocumentFromWorksheet (worksheet, name) {
  * @param {WorkBook} workbook
  * @return {Document[]}
  */
-function loadDocumentsFromWorkBook (workbook) {
+function readDocumentsFromWorkBook (workbook) {
   let result = []
   workbook.SheetNames
           .forEach(sheetName => {
@@ -33,11 +33,11 @@ function loadDocumentsFromWorkBook (workbook) {
  * @param fileName
  * @return {Document[]}
  */
-function loadDocumentsFromExcel (fileName) {
-  return loadDocumentsFromWorkBook(xlsx.readFile(fileName))
+function readDocumentsFromExcel (fileName) {
+  return readDocumentsFromWorkBook(xlsx.readFile(fileName))
 }
 
 module.exports = {
-  loadDocumentsFromExcel,
-  loadDocumentsFromWorkBook,
+  readDocumentsFromExcel,
+  readDocumentsFromWorkBook,
 }

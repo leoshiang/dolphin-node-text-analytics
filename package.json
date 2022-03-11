@@ -1,6 +1,6 @@
 {
   "name": "node-dolphin-nlp",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "main": "./index.js",
   "description": "",
   "author": "Leo Shiang <leoshiang@gmail.com>",
@@ -29,7 +29,7 @@
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
     "mock-fs": "^5.1.2",
-    "node-dolphin": "^0.0.12",
+    "node-dolphin": "^0.0.16",
     "nodejieba": "^2.6.0",
     "random-access-file": "^2.2.0",
     "webpack": "^5.69.1",

@@ -7,7 +7,7 @@
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> DocumentCollection.js</title>
+  <title> TfidfCalculator.js</title>
 
   <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -68,7 +68,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Document.html">Document</a></li><li><a href="DocumentCollection.html">DocumentCollection</a></li><li><a href="TokenizationResult.html">TokenizationResult</a></li><li><a href="Tokenizer.html">Tokenizer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createDocumentFromWorksheet">createDocumentFromWorksheet</a></li><li><a href="global.html#initJieba">initJieba</a></li><li><a href="global.html#loadDocumentsFromExcel">loadDocumentsFromExcel</a></li><li><a href="global.html#loadDocumentsFromWorkBook">loadDocumentsFromWorkBook</a></li><li><a href="global.html#tfidf">tfidf</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Corpus.html">Corpus</a></li><li><a href="Document.html">Document</a></li><li><a href="SegmentationResult.html">SegmentationResult</a></li><li><a href="SegmentationResults.html">SegmentationResults</a></li><li><a href="WordsSegmenter.html">WordsSegmenter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createDocumentFromWorksheet">createDocumentFromWorksheet</a></li><li><a href="global.html#initJieba">initJieba</a></li><li><a href="global.html#readDocumentsFromExcel">readDocumentsFromExcel</a></li><li><a href="global.html#readDocumentsFromWorkBook">readDocumentsFromWorkBook</a></li><li><a href="global.html#%25E6%2596%25B7%25E8%25A9%259E%25E6%25A8%25A1%25E5%25BC%258F%25E3%2580%2582">斷詞模式。</a></li></ul></div>
                 
             </nav>
         </div>
@@ -76,7 +76,7 @@
             <div class="content">
                 <header class="page-title">
                     <p>Source</p>
-                    <h1>DocumentCollection.js</h1>
+                    <h1>TfidfCalculator.js</h1>
                 </header>
                 
 
@@ -85,94 +85,54 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const { Document } = require('./Document')
-const ExcelReader = require('./ExcelReader')
-const Path = require('path')
+            <pre class="prettyprint source linenums"><code>const _ = require('lodash')
+const { Matrix } = require('node-dolphin')
+const { Vector } = require('node-dolphin')
+const { TfidfResult } = require('./TfidfResult')
 
-/**
- * 此回呼函數會在 forEach 執行被呼叫。
- * @callback DocumentCollection~forEachCallback
- * @param {Document} document 文件。
- * @param {number} index 編號，從 0 開始。
- */
-
-/**
- * @class
- * @classdesc 文件集合。
- */
-class DocumentCollection {
-  #documents
+class TfidfCalculator {
 
   /**
-   * @constructor
+   *
+   * @param {SegmentationResults} results
+   * @return {TfidfResult}
    */
-  constructor () {
-    this.clear()
-  }
+  static execute (results) {
+    let rows = results.wordDocumentMatrix.rows
+    let cols = results.wordDocumentMatrix.columns
+    let wordDocumentMatrix = results.wordDocumentMatrix
 
-  /**
-   * 文件集合裡面有幾份文件。
-   * @return {number}
-   */
-  get length () {
-    return this.#documents.length
-  }
+    let tf = new Matrix(rows, cols)
+    let idf = new Vector(rows)
+    let tfidf = new Matrix(rows, cols)
 
-  /**
-   * 清除文件內容。
-   * @return {DocumentCollection}
-   */
-  clear () {
-    this.#documents = []
-    return this
-  }
+    results.allWords.forEach((word, wordIndex) => {
+      results.forEach((r, docIndex) => {
+        tf[wordIndex][docIndex] = wordDocumentMatrix[wordIndex][docIndex] /
+          results.documentWordCount[docIndex]
+      })
+      idf[wordIndex] = 1 + Math.log((results.length + 1) / (results.documentFrequency(word) + 1))
+    })
 
-  /**
-   * 遍歷每一份文件。
-   * @param {DocumentCollection~forEachCallback} callback 文件和編號會傳入 callback。
-   * @return {DocumentCollection}
-   */
-  forEach (callback) {
-    this.#documents.forEach((document, index) => callback(document, index))
-    return this
-  }
+    results.allWords.forEach((word, wordIndex) => {
+      let idfValue = idf[wordIndex]
+      results.forEach((r, docIndex) => {
+        tfidf[wordIndex][docIndex] = idfValue * tf[wordIndex][docIndex]
+      })
+    })
 
-  /**
-   * 從文字檔載入文件。
-   * @param {string} fileName 檔案名稱。
-   * @return {DocumentCollection}
-   */
-  loadDocumentFromFile (fileName) {
-    const name = Path.basename(fileName)
-    this.#documents.push(new Document(name).loadFromTextFile(fileName))
-    return this
-  }
-
-  /**
-   * 從 Excel 檔案載入文件，每一個 worksheet 會被視為一份文件。
-   * @param {string} filename 檔案名稱。
-   * @return {DocumentCollection}
-   */
-  loadDocumentsFromExcel (filename) {
-    let documents = ExcelReader.loadDocumentsFromExcel(filename)
-    this.#documents = this.#documents.concat(documents)
-    return this
-  }
-
-  /**
-   * 從 workbook 物件載入文件，每一個 worksheet 會被視為一份文件。
-   * @param {WorkBook} workbook 使用 xlsx 套件 read 函數取得的物件。
-   * @return {DocumentCollection}
-   */
-  loadDocumentsFromWorkBook (workbook) {
-    let documents = ExcelReader.loadDocumentsFromWorkBook(workbook)
-    this.#documents = this.#documents.concat(documents)
-    return this
+    return new TfidfResult({
+                             tf: tf,
+                             idf: idf,
+                             tfidf: tfidf,
+                             allWords: Array.from(results.allWords),
+                             wordDocumentMatrix: wordDocumentMatrix,
+                           })
   }
 }
 
 module.exports = {
-  DocumentCollection: DocumentCollection,
+  TfidfCalculator,
 }
 </code></pre>
         </article>

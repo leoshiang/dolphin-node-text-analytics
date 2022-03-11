@@ -1,7 +1,7 @@
 const FoodServiceDataset = require('../src/DataSet/FoodServicesDataset')
-const TFIDF = require('../src/Tfidf')
-const { Tokenizer } = require('../src/Tokenizer')
-const { DocumentCollection } = require('../src/DocumentCollection')
+const { TfidfCalculator } = require('../src/TfidfCalculator')
+const { WordsSegmenter } = require('../src/WordsSegmenter')
+const { Corpus } = require('../src/Corpus')
 const Jieba = require('../src/Jieba')
 const fs = require('fs')
 const os = require('os')
@@ -24,10 +24,10 @@ describe('測試 tfidf', () => {
                       userDict: userDictFileName,
                       stopWordDict: stopWordsFileName,
                     })
-    const dc = new DocumentCollection().loadDocumentsFromWorkBook(FoodServiceDataset.ExcelWorkbook)
-    const tokenizationResults = Tokenizer.parseDocuments(dc)
-    const result = TFIDF.tfidf(tokenizationResults)
-    expect(result.getIDF('滷肉飯', tokenizationResults)).toBe(0.0019193857965451055)
+    const corpus = new Corpus().readWorkBook(FoodServiceDataset.ExcelWorkbook)
+    const results = WordsSegmenter.tokenizeCorpus(corpus)
+    const tfidfResult = TfidfCalculator.execute(results)
+    expect(tfidfResult.getIDF('滷肉飯', results)).toBe(0.0022522522522522522)
 
     fs.unlinkSync(userDictFileName)
     fs.unlinkSync(stopWordsFileName)

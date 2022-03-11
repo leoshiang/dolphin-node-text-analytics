@@ -7,7 +7,7 @@
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> Document.js</title>
+  <title> TextAnalytics.js</title>
 
   <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -76,7 +76,7 @@
             <div class="content">
                 <header class="page-title">
                     <p>Source</p>
-                    <h1>Document.js</h1>
+                    <h1>TextAnalytics.js</h1>
                 </header>
                 
 
@@ -85,136 +85,178 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const fs = require('fs')
-const { Type } = require('node-dolphin')
-const { StrUtils } = require('node-dolphin')
+            <pre class="prettyprint source linenums"><code>const { Jieba } = require('./Jieba')
+const { Corpus } = require('./Corpus')
+const { WordsSegmenter } = require('./WordsSegmenter')
+const { Matrix } = require('node-dolphin')
+const { TfidfCalculator } = require('./TfidfCalculator')
+const { TfidfResult } = require('./TfidfResult')
+const { CutMethods } = require('./WordsSegmenter')
+const fs = require('fs')
+const { TfidfExcelWriter } = require('./Writers/TfidfExcelWriter')
+const { SegmentationResults } = require('./SegmentationResults')
 
-/**
- * @class
- * @classdesc 文件。
- */
-class Document {
-  #lines
-  #name
+class TextAnalytics {
 
-  /**
-   * @constructor
-   * @param {string} name 文件名稱。
-   */
-  constructor (name) {
-    this.#name = name || ''
-    this.#lines = []
+  #corpus
+  #segmentationResults
+  #stopWords
+  #stopWordsFileName
+  #tfidfResult
+  #totalWordCount
+  #userDictionaryFileName
+
+  constructor () {
+    this.#corpus = new Corpus()
+    this.#segmentationResults = new SegmentationResults()
+    this.#stopWords = {}
+    this.#stopWordsFileName = ''
+    this.#tfidfResult = new TfidfResult()
+    this.#totalWordCount = 0
+    this.#userDictionaryFileName = ''
+  }
+
+  get corpus () {
+    return this.#corpus
+  }
+
+  get segmentationResults () {
+    return this.#segmentationResults
+  }
+
+  get tfidfResult () {
+    return this.#tfidfResult
+  }
+
+  #loadStopWords () {
+    this.#stopWords = {}
+    fs.readFileSync(this.#stopWordsFileName, 'utf8')
+      .split('\r\n')
+      .forEach(x => {
+        this.#stopWords[x] = true
+      })
   }
 
   /**
-   * 字元數目。
-   * @return {number} 字元數目。
+   * 建立詞彙之間的 PMI 矩陣。
+   * @param {String[]} words 詞彙陣列。
+   * @return {Matrix}
    */
-  get length () {
-    return this.#lines.reduce((acc, curr) => acc + curr.length, 0)
-  }
-
-  /**
-   * 傳回行數。
-   * @return {number} 行數。
-   */
-  get lineCount () {
-    return this.#lines.length
-  }
-
-  /**
-   * 文件的所有行的資料。
-   * @return {*}
-   */
-  get lines () {
-    return this.#lines
-  }
-
-  /**
-   * 文件名稱。
-   * @return {string}
-   */
-  get name () {
-    return this.#name
-  }
-
-  /**
-   * 加入文字陣列。
-   * @param {String[]} lines 要加入的文字陣列。
-   * @return {Document}
-   * @example
-   * let d = new Document()
-   * d.add(['this is line 1, 'this is line 2']
-   */
-  addLines (lines) {
-    if (Type.isArray(lines)) {
-      lines.forEach(line => this.addText(line))
+  buildPMIMatrix (words) {
+    let result = new Matrix(words.length, words.length).fill(0)
+    for (let r = 0; r &lt; words.length; r++) {
+      for (let c = 0; c &lt;= r; c++) {
+        if (c !== r) {
+          let pmi = this.pmi(words[r], words[c])
+          if (isFinite(pmi) &amp;&amp; !isNaN(pmi) &amp;&amp; pmi !== 0) {
+            result[r][c] = pmi
+            result[c][r] = pmi
+          }
+        }
+      }
     }
+    return result
+  }
+
+  /**
+   * 計算 tfidf。
+   * @param {string} cutMethod=cut 斷詞方法，可以從 CutMethods 物件取得，可使用的值為：cut、cutHMM、cutALL與cutForSearch。
+   * @return {TextAnalytics}
+   */
+  execute (cutMethod = CutMethods.cut) {
+    Jieba.load({
+                 userDict: this.#userDictionaryFileName,
+                 stopWordDict: this.#stopWordsFileName,
+               })
+    this.#loadStopWords()
+    this.#segmentationResults = WordsSegmenter.tokenizeCorpus(this.#corpus,
+                                                              cutMethod,
+                                                              this.#stopWords)
+    this.#tfidfResult = TfidfCalculator.execute(this.#segmentationResults)
+    return this
+  }
+
+  exportTfidfToExcel (fileName) {
+    TfidfExcelWriter.export(this.#segmentationResults, this.#tfidfResult, fileName)
     return this
   }
 
   /**
-   * 加入文字。如果傳入空字串或是非文字的資料，會被忽略。如果文字含有換行字元（cr\lf）會自動斷行。
-   * @param {string|string[]} text 要加入的文字。
-   * @return {Document}
-   * @example
-   * let d = new Document()
-   * d.add('this is line 1')
-   * d.add('this is line 2')
-   * d.add('this is line 3')
-   */
-  addText (text) {
-    if (Type.isString(text) &amp;&amp; text !== '') {
-      this.#lines.push(text)
-    }
-    return this
-  }
-
-  /**
-   * 將所有文字合併成一個字串。
-   * @return {string} 所有文字合併成的字串
-   */
-  asString () {
-    return this.#lines.reduce((acc, curr) => acc + curr, '')
-  }
-
-  /**
-   * 清除文件內容。
-   * @return {Document}
-   */
-  clear () {
-    this.#name = ''
-    this.#lines = []
-    return this
-  }
-
-  /**
-   * 載入文字檔的內容。
+   * 載入停等字。
    * @param {string} fileName 檔案名稱。
-   * @param {string} encoding 編碼，預設值為 'utf8'。
-   * @return {Document}
+   * @return {TextAnalytics}
    */
-  loadFromTextFile (fileName, encoding = 'utf8') {
-    if (!fs.existsSync(fileName)) {
-      return this
-    }
-    const contents = fs.readFileSync(fileName, encoding).split('\r\n')
-    this.#lines = this.#lines.concat(contents)
+  loadStopWordsFile (fileName) {
+    this.#stopWordsFileName = fileName
     return this
   }
 
   /**
-   * 計算詞彙同時出現在句子的行數。
-   * @param {*} terms 詞彙陣列，["new", "york"]
-   * @return {*}
+   * 載入使用者字典。
+   * @param {string} fileName 檔案名稱。
+   * @return {TextAnalytics}
    */
-  numberOfLinesIncludes (terms) {
-    let x = this.lines.filter(line => StrUtils.includes(line, terms))
-    return x.length
+  loadUserDictionaryFile (fileName) {
+    this.#userDictionaryFileName = fileName
+    return this
+  }
+
+  /**
+   * 計算詞彙出現的機率。p(word) = (word 在所有文件出現的次數)/(所有文件中詞彙出現的次數總和)
+   * @param {string} word 詞彙。
+   * @return {number} 機率
+   */
+  p (word) {
+    let wordCount = this.#segmentationResults.wordCount(word)
+    return wordCount / this.#segmentationResults.totalWordCount
+  }
+
+  /**
+   * 計算兩個詞彙的 pmi。pmi(x,y) = p(x,y)/(p(x) * p(y))
+   * @param {string} x 詞彙。
+   * @param {string} y 詞彙。
+   * @return {number}
+   */
+  pmi (x, y) {
+    let px = this.p(x)
+    let py = this.p(y)
+    let pxy = this.pxy(x, y)
+    return Math.log(pxy / (px * py))
+  }
+
+  /**
+   * 計算兩個詞彙同時出現的機率。p(x,y) = (x&amp;y 在所有文件同時出現的次數) / (所有文件中詞彙出現的次數總和)
+   * @param x
+   * @param y
+   * @return {number}
+   */
+  pxy (x, y) {
+    return this.#corpus.numberOfLinesIncludes([x, y]) / this.#segmentationResults.totalWordCount
+  }
+
+  /**
+   * 加入 Excel 檔案。每一個 Sheet 會被當作一份文件處理。
+   * @param {string} fileName 檔案名稱。
+   * @return {TextAnalytics}
+   */
+  readExcel (fileName) {
+    this.#corpus.readExcel(fileName)
+    return this
+  }
+
+  /**
+   * 加入文件。
+   * @param {string} fileName 文件檔案名稱。
+   * @param {string} name 文件名稱。
+   * @return {TextAnalytics}
+   */
+  readTextFile (fileName, name) {
+    this.#corpus.readTextFile(fileName)
+    return this
   }
 }
 
-module.exports = { Document }
+module.exports = { TextAnalytics }
 </code></pre>
         </article>
     </section>

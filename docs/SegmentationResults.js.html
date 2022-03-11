@@ -7,7 +7,7 @@
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> Tokenizer.js</title>
+  <title> SegmentationResults.js</title>
 
   <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -68,7 +68,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Document.html">Document</a></li><li><a href="DocumentCollection.html">DocumentCollection</a></li><li><a href="TokenizationResult.html">TokenizationResult</a></li><li><a href="Tokenizer.html">Tokenizer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createDocumentFromWorksheet">createDocumentFromWorksheet</a></li><li><a href="global.html#initJieba">initJieba</a></li><li><a href="global.html#loadDocumentsFromExcel">loadDocumentsFromExcel</a></li><li><a href="global.html#loadDocumentsFromWorkBook">loadDocumentsFromWorkBook</a></li><li><a href="global.html#tfidf">tfidf</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Corpus.html">Corpus</a></li><li><a href="Document.html">Document</a></li><li><a href="SegmentationResult.html">SegmentationResult</a></li><li><a href="SegmentationResults.html">SegmentationResults</a></li><li><a href="WordsSegmenter.html">WordsSegmenter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createDocumentFromWorksheet">createDocumentFromWorksheet</a></li><li><a href="global.html#initJieba">initJieba</a></li><li><a href="global.html#readDocumentsFromExcel">readDocumentsFromExcel</a></li><li><a href="global.html#readDocumentsFromWorkBook">readDocumentsFromWorkBook</a></li><li><a href="global.html#%25E6%2596%25B7%25E8%25A9%259E%25E6%25A8%25A1%25E5%25BC%258F%25E3%2580%2582">斷詞模式。</a></li></ul></div>
                 
             </nav>
         </div>
@@ -76,7 +76,7 @@
             <div class="content">
                 <header class="page-title">
                     <p>Source</p>
-                    <h1>Tokenizer.js</h1>
+                    <h1>SegmentationResults.js</h1>
                 </header>
                 
 
@@ -85,29 +85,78 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const { Jieba } = require('./Jieba')
-const { TokenizationResult } = require('./TokenizationResult')
+            <pre class="prettyprint source linenums"><code>const _ = require('lodash')
+const { Matrix } = require('node-dolphin')
+const { Vector } = require('node-dolphin')
 
 /**
  * @class
+ * @classdesc 斷詞結果。
  */
-class Tokenizer {
+class SegmentationResults extends Array {
+  #allWords
+  #documentWordCount
+  #totalWordCount
+  #wordCount
+  #wordDocumentMatrix
 
-  static parseDocument (document, stopWords = {}) {
-    let terms = Jieba.cut(document.asString()).filter(x => {
-      return (x !== ' ') &amp;&amp; !stopWords[x]
-    })
-    return new TokenizationResult(document, terms)
+  constructor (results) {
+    super(...(results ||[]))
+    this.#buildWordDocumentMatrix()
   }
 
-  static parseDocuments (collection, stopWords) {
-    let result = []
-    collection.forEach(document => result.push(this.parseDocument(document, stopWords)))
-    return result
+  get allWords () {
+    return this.#allWords
+  }
+
+  get documentWordCount () {
+    return this.#documentWordCount
+  }
+
+  get totalWordCount () {
+    return this.#totalWordCount
+  }
+
+  get wordDocumentMatrix () {
+    return this.#wordDocumentMatrix
+  }
+
+  #buildWordDocumentMatrix () {
+    this.#allWords = this.reduce((acc, curr) => _.merge(acc, curr.words), [])
+    this.#wordCount = {}
+    this.#wordDocumentMatrix = new Matrix(this.#allWords.length, this.length).fill(0)
+    this.#documentWordCount = new Vector(this.#allWords.length).fill(0)
+
+    this.#allWords.forEach((word, wordIndex) => {
+      let sum = 0
+      this.forEach((r, docIndex) => {
+        let value = (r.wordCount[word] || 0)
+        this.#wordDocumentMatrix[wordIndex][docIndex] += value
+        this.#documentWordCount[docIndex] += value
+        sum += value
+      })
+      this.#wordCount[word] = sum
+    })
+
+    this.#totalWordCount = this.#wordDocumentMatrix.sum()
+  }
+
+  documentFrequency (word) {
+    let index = this.#allWords.indexOf(word)
+    if (index === -1) {
+      return 0
+    }
+    return this.#wordDocumentMatrix[index].reduce((acc, curr) => acc + (curr > 0
+      ? 1
+      : 0), 0)
+  }
+
+  wordCount (word) {
+    return this.#wordCount[word] || 0
   }
 }
 
-module.exports = { Tokenizer }
+module.exports = { SegmentationResults }
 </code></pre>
         </article>
     </section>

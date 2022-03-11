@@ -102,16 +102,6 @@ class Document {
   }
 
   /**
-   * 計算詞彙同時出現在句子的行數。
-   * @param {*} terms 詞彙陣列，["new", "york"]
-   * @return {*}
-   */
-  contains (terms) {
-    let x = this.lines.filter(line => StrUtils.contains(line, terms))
-    return x.length
-  }
-
-  /**
    * 載入文字檔的內容。
    * @param {string} fileName 檔案名稱。
    * @param {string} encoding 編碼，預設值為 'utf8'。
@@ -124,6 +114,16 @@ class Document {
     const contents = fs.readFileSync(fileName, encoding).split('\r\n')
     this.#lines = this.#lines.concat(contents)
     return this
+  }
+
+  /**
+   * 計算詞彙同時出現在句子的行數。
+   * @param {*} terms 詞彙陣列，["new", "york"]
+   * @return {*}
+   */
+  numberOfLinesIncludes (terms) {
+    let x = this.lines.filter(line => StrUtils.includes(line, terms))
+    return x.length
   }
 }
 

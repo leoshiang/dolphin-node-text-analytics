@@ -7,7 +7,7 @@
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> NLP.js</title>
+  <title> Corpus.js</title>
 
   <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -68,7 +68,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Document.html">Document</a></li><li><a href="DocumentCollection.html">DocumentCollection</a></li><li><a href="TokenizationResult.html">TokenizationResult</a></li><li><a href="Tokenizer.html">Tokenizer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createDocumentFromWorksheet">createDocumentFromWorksheet</a></li><li><a href="global.html#initJieba">initJieba</a></li><li><a href="global.html#loadDocumentsFromExcel">loadDocumentsFromExcel</a></li><li><a href="global.html#loadDocumentsFromWorkBook">loadDocumentsFromWorkBook</a></li><li><a href="global.html#tfidf">tfidf</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Corpus.html">Corpus</a></li><li><a href="Document.html">Document</a></li><li><a href="SegmentationResult.html">SegmentationResult</a></li><li><a href="SegmentationResults.html">SegmentationResults</a></li><li><a href="WordsSegmenter.html">WordsSegmenter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createDocumentFromWorksheet">createDocumentFromWorksheet</a></li><li><a href="global.html#initJieba">initJieba</a></li><li><a href="global.html#readDocumentsFromExcel">readDocumentsFromExcel</a></li><li><a href="global.html#readDocumentsFromWorkBook">readDocumentsFromWorkBook</a></li><li><a href="global.html#%25E6%2596%25B7%25E8%25A9%259E%25E6%25A8%25A1%25E5%25BC%258F%25E3%2580%2582">斷詞模式。</a></li></ul></div>
                 
             </nav>
         </div>
@@ -76,7 +76,7 @@
             <div class="content">
                 <header class="page-title">
                     <p>Source</p>
-                    <h1>NLP.js</h1>
+                    <h1>Corpus.js</h1>
                 </header>
                 
 
@@ -85,115 +85,104 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const { DocumentCollection } = require('./DocumentCollection')
-const { Tokenizer } = require('./Tokenizer')
-const TFIDF = require('./TFIDF')
-const { TFIDFResultCsvExporter } = require('./TFIDFResultCsvExporter')
-const { TFIDFResultExcelExporter } = require('./TFIDFResultExcelExporter')
-const { Jieba } = require('./Jieba')
-const fs = require('fs')
-const { Type } = require('node-dolphin')
+            <pre class="prettyprint source linenums"><code>const { Document } = require('./Document')
+const ExcelReader = require('./ExcelReader')
+const Path = require('path')
 
-class NLP {
+/**
+ * 此回呼函數會在 forEach 執行被呼叫。
+ * @callback Corpus~forEachCallback
+ * @param {Document} document 文件。
+ * @param {number} index 編號，從 0 開始。
+ */
 
-  #documentCollection
-  #stopWords
-  #stopWordsFileName
-  #tfidfResult
-  #tokenizationResults
-  #userDictionaryFileName
+/**
+ * @class
+ * @classdesc 文件集合。
+ */
+class Corpus {
+  #documents
 
+  /**
+   * @constructor
+   */
   constructor () {
-    this.#documentCollection = new DocumentCollection()
-    this.#stopWords = []
-    this.#tfidfResult = {}
-  }
-
-  get documentCollection () {
-    return this.#documentCollection
-  }
-
-  #loadStopWords () {
-    this.#stopWords = {}
-    fs.readFileSync(this.#stopWordsFileName, 'utf8')
-      .split('\r\n')
-      .forEach(x => {
-        this.#stopWords[x] = true
-      })
-  }
-
-  #makeSureTfidfHasBeenExecuted () {
-    if ((this.#tfidfResult === {}) || Type.isUndefined(this.#tokenizationResults)) {
-      throw new Error('尚未執行 TFIDF!')
-    }
-  }
-
-  calculateTFIDF () {
-    Jieba.load({
-                 userDict: this.#userDictionaryFileName,
-                 stopWordDict: this.#stopWordsFileName,
-               })
-    this.#loadStopWords()
-    this.#tokenizationResults = Tokenizer.parseDocuments(this.#documentCollection, this.#stopWords)
-    this.#tfidfResult = TFIDF.tfidf(this.#tokenizationResults)
-    return this
-  }
-
-  exportTFIDFToCsv (fileName) {
-    this.#makeSureTfidfHasBeenExecuted()
-    TFIDFResultCsvExporter.export(this.#tfidfResult, this.#tokenizationResults, fileName)
-    return this
-  }
-
-  exportTFIDFToExcel (fileName) {
-    this.#makeSureTfidfHasBeenExecuted()
-    TFIDFResultExcelExporter.export(this.#tfidfResult, this.#tokenizationResults, fileName)
-    return this
+    this.clear()
   }
 
   /**
-   * 加入文件。
-   * @param {string} fileName 文件檔案名稱。
-   * @param {string} name 文件名稱。
-   * @return {NLP}
+   * 文件集合裡面有幾份文件。
+   * @return {number}
    */
-  loadDocument (fileName, name) {
-    this.#documentCollection.loadDocumentFromFile(fileName)
+  get length () {
+    return this.#documents.length
+  }
+
+  /**
+   * 清除文件內容。
+   * @return {Corpus}
+   */
+  clear () {
+    this.#documents = []
     return this
   }
 
   /**
-   * 加入 Excel 檔案。每一個 Sheet 會被當作一份文件處理。
+   * 遍歷每一份文件。
+   * @param {Corpus~forEachCallback} callback 文件和編號會傳入 callback。
+   * @return {Corpus}
+   */
+  forEach (callback) {
+    this.#documents.forEach((document, index) => callback(document, index))
+    return this
+  }
+
+  /**
+   * 計算詞彙同時出現在句子的行數。
+   * @param {*} terms 詞彙陣列，["new", "york"]
+   * @return {number}
+   */
+  numberOfLinesIncludes (terms) {
+    return this.#documents.reduce((acc, curr) => acc + curr.numberOfLinesIncludes(terms), 0)
+  }
+
+  /**
+   * 從 Excel 檔案載入文件，每一個 worksheet 會被視為一份文件。
+   * @param {string} filename 檔案名稱。
+   * @return {Corpus}
+   */
+  readExcel (filename) {
+    let documents = ExcelReader.readDocumentsFromExcel(filename)
+    this.#documents = this.#documents.concat(documents)
+    return this
+  }
+
+  /**
+   * 從文字檔載入文件。
    * @param {string} fileName 檔案名稱。
-   * @return {NLP}
+   * @return {Corpus}
    */
-  loadDocumentsFromExcel (fileName) {
-    this.#documentCollection.loadDocumentsFromExcel(fileName)
+  readTextFile (fileName) {
+    const name = Path.basename(fileName)
+    this.#documents.push(new Document(name).loadFromTextFile(fileName))
     return this
   }
 
   /**
-   * 載入停等字。
-   * @param {string} fileName 檔案名稱。
-   * @return {NLP}
+   * 從 workbook 物件載入文件，每一個 worksheet 會被視為一份文件。
+   * @param {WorkBook} workbook 使用 xlsx 套件 read 函數取得的物件。
+   * @return {Corpus}
    */
-  loadStopWordsFile (fileName) {
-    this.#stopWordsFileName = fileName
-    return this
-  }
-
-  /**
-   * 載入使用者字典。
-   * @param {string} fileName 檔案名稱。
-   * @return {NLP}
-   */
-  loadUserDictionaryFile (fileName) {
-    this.#userDictionaryFileName = fileName
+  readWorkBook (workbook) {
+    let documents = ExcelReader.readDocumentsFromWorkBook(workbook)
+    this.#documents = this.#documents.concat(documents)
     return this
   }
 }
 
-module.exports = { NLP }
+module.exports = {
+  Corpus,
+}
 </code></pre>
         </article>
     </section>

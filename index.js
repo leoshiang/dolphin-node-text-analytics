@@ -1,15 +1,21 @@
-const { FoodServicesDataset } = require('./src/FoodServicesDataset')
+const FoodServicesDataset = require('./src/DataSet/FoodServicesDataset')
+const { Corpus } = require('./src/Corpus')
 const { Document } = require('./src/Document')
-const { DocumentCollection } = require('./src/DocumentCollection')
-const { Tokenizer } = require('./src/Tokenizer')
-const { TFIDF } = require('./src/TFIDF')
+const { SegmentationResult } = require('./src/SegmentationResult')
+const { SegmentationResults } = require('./src/SegmentationResults')
 const { TextAnalytics } = require('./src/TextAnalytics')
+const { TfidfCalculator } = require('./src/TfidfCalculator')
+const { TfidfResult } = require('./src/TfidfResult')
+const { WordsSegmenter } = require('./src/WordsSegmenter')
 
 module.exports = {
-  FoodServicesDataset,
+  Corpus,
   Document,
-  DocumentCollection,
-  Tokenizer,
-  TFIDF,
+  FoodServicesDataset,
+  SegmentationResult,
+  SegmentationResults,
   TextAnalytics,
+  TfidfCalculator,
+  TfidfResult,
+  WordsSegmenter,
 }

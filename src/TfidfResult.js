@@ -1,22 +1,31 @@
+const { Vector } = require('node-dolphin')
+const { Matrix } = require('node-dolphin')
+
 class TfidfResult {
+  #allWords
   #idf
-  #terms
   #tf
   #tfidf
+  #wordDocumentMatrix
 
-  constructor (result) {
-    this.#tf = result.tf
-    this.#idf = result.idf
-    this.#tfidf = result.tfidf
-    this.#terms = result.terms
+  constructor (result = {}) {
+    this.#allWords = result.allWords || []
+    this.#idf = result.idf || new Vector()
+    this.#tf = result.tf || new Matrix()
+    this.#tfidf = result.tfidf || new Matrix()
+    this.#wordDocumentMatrix = result.wordDocumentMatrix || new Matrix()
+  }
+
+  get allWords () {
+    return this.#allWords
+  }
+
+  get idf () {
+    return this.#idf
   }
 
   get tdf () {
     return this.#idf
-  }
-
-  get terms () {
-    return this.#terms
   }
 
   get tf () {
@@ -27,22 +36,26 @@ class TfidfResult {
     return this.#tfidf
   }
 
-  #getIndexOfTerm (term) {
-    return this.#terms.indexOf(term)
+  get wordDocumentMatrix () {
+    return this.#wordDocumentMatrix
   }
 
-  getIDF (term) {
-    let row = this.#getIndexOfTerm(term)
+  #getIndexOfWord (word) {
+    return this.#allWords.indexOf(word)
+  }
+
+  getIDF (word) {
+    let row = this.#getIndexOfWord(word)
     return this.#tf[row][0]
   }
 
-  getTF (term, documentIndex) {
-    let row = this.#getIndexOfTerm(term)
+  getTF (word, documentIndex) {
+    let row = this.#getIndexOfWord(word)
     return this.#tf[row][documentIndex]
   }
 
-  getTFIDF (term, documentIndex) {
-    let row = this.#getIndexOfTerm(term)
+  getTFIDF (word, documentIndex) {
+    let row = this.#getIndexOfWord(word)
     return this.#tfidf[row][documentIndex]
   }
 }

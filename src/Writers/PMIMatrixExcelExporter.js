@@ -1,6 +1,6 @@
 const excel4node = require('excel4node')
 
-class PmiMatrixExcelExporter {
+class PMIMatrixExcelExporter {
 
   static export (terms, pmiMatrix, fileName) {
     const workbook = new excel4node.Workbook()
@@ -27,4 +27,4 @@ class PmiMatrixExcelExporter {
   }
 }
 
-module.exports = { PmiMatrixExcelExporter }
+module.exports = { PMIMatrixExcelExporter }

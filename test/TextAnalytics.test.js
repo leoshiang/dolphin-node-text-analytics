@@ -2,63 +2,59 @@ const FoodServiceDataset = require('../src/DataSet/FoodServicesDataset')
 const { TextAnalytics } = require('../src/TextAnalytics')
 const os = require('os')
 const fs = require('fs')
-const { PmiMatrixExcelExporter } = require('../src/Writers/PmiMatrixExcelExporter')
-const { TfidfCsvWriter } = require('../src/Writers/TfidfCsvWriter')
-const { TfidfExcelWriter } = require('../src/Writers/TfidfExcelWriter')
+const { PMIMatrixExcelExporter } = require('../src/Writers/PMIMatrixExcelExporter')
 
-describe('測試 loadDocumentsFromExcel', function () {
-  test('讀取 FoodServiceDataset.Excel，應有 70 個文件。', function () {
-
+describe('測試 readDocumentsFromExcel', function () {
+  test('應能產生 tfidf.xlsx。', function () {
     const tempDir = os.tmpdir() // /tmp
-    let fileName = tempDir + '/food-service.xlsx'
+    let tempFileName = tempDir + '/food-service.xlsx'
     let excelFile = Buffer.from(FoodServiceDataset.Base64EncodedExcel, 'base64')
-    fs.writeFileSync(fileName, excelFile, { flag: 'w+' })
-    let userDictFileName = tempDir + '/userdict.txt'
-    let stopWordsFileName = tempDir + '/stopwords.txt'
-    fs.writeFileSync(userDictFileName,
+    fs.writeFileSync(tempFileName, excelFile, { flag: 'w+' })
+    let userDictTempFileName = tempDir + '/userdict.txt'
+    let stopWordsTempFileName = tempDir + '/stopwords.txt'
+    fs.writeFileSync(userDictTempFileName,
                      Buffer.from(FoodServiceDataset.UserDictionary, 'base64').toString('utf8'),
                      { flag: 'w+' })
-    fs.writeFileSync(stopWordsFileName,
+    fs.writeFileSync(stopWordsTempFileName,
                      Buffer.from(FoodServiceDataset.StopWords, 'base64').toString('utf8'),
                      { flag: 'w+' })
 
     let textAnalytics = new TextAnalytics()
-    textAnalytics.loadUserDictionaryFile(userDictFileName)
-                 .loadStopWordsFile(stopWordsFileName)
-                 .loadDocumentsFromExcel(fileName)
-                 .tfidf()
-    TfidfCsvWriter.export(textAnalytics, './tfidf.csv')
-    TfidfExcelWriter.export(textAnalytics, './tfidf.xlsx')
+    textAnalytics.loadUserDictionaryFile(userDictTempFileName)
+                 .loadStopWordsFile(stopWordsTempFileName)
+                 .readExcel(tempFileName)
+                 .execute()
+                 .exportTfidfToExcel('./tfidf.xlsx')
     try {
-      fs.unlinkSync(fileName)
+      fs.unlinkSync(tempFileName)
     } catch (e) {
     }
   })
 })
 
-describe('測試 loadDocumentsFromExcel', function () {
+describe('測試 pmi', function () {
   test('pmi(便宜,相對)', function () {
     const tempDir = os.tmpdir() // /tmp
-    let fileName = tempDir + '/food-service.xlsx'
+    let tempFileName = tempDir + '/food-service.xlsx'
     let excelFile = Buffer.from(FoodServiceDataset.Base64EncodedExcel, 'base64')
-    fs.writeFileSync(fileName, excelFile, { flag: 'w+' })
-    let userDictFileName = tempDir + '/userdict.txt'
-    let stopWordsFileName = tempDir + '/stopwords.txt'
-    fs.writeFileSync(userDictFileName,
+    fs.writeFileSync(tempFileName, excelFile, { flag: 'w+' })
+    let userDictTempFileName = tempDir + '/userdict.txt'
+    let stopWordsTempFileName = tempDir + '/stopwords.txt'
+    fs.writeFileSync(userDictTempFileName,
                      Buffer.from(FoodServiceDataset.UserDictionary, 'base64').toString('utf8'),
                      { flag: 'w+' })
-    fs.writeFileSync(stopWordsFileName,
+    fs.writeFileSync(stopWordsTempFileName,
                      Buffer.from(FoodServiceDataset.StopWords, 'base64').toString('utf8'),
                      { flag: 'w+' })
 
     let textAnalytics = new TextAnalytics()
 
-    let pmi = textAnalytics.loadUserDictionaryFile(userDictFileName)
-                           .loadStopWordsFile(stopWordsFileName)
-                           .loadDocumentsFromExcel(fileName)
-                           .tfidf()
-                           .pmi('便宜', '相對')
-    expect(pmi).toBe(4.125890152047615)
+    let pmi = textAnalytics.loadUserDictionaryFile(userDictTempFileName)
+                           .loadStopWordsFile(stopWordsTempFileName)
+                           .readExcel(tempFileName)
+                           .execute()
+                           .pmi('還不錯', '服務')
+    expect(pmi).toBe(2.97862499086066)
     let terms = [
       '好吃',
       '掌控',
@@ -197,10 +193,10 @@ describe('測試 loadDocumentsFromExcel', function () {
       '人員',
       '環境',
     ]
-    let pmiMatrix = textAnalytics.pmiMatrix(terms)
-    PmiMatrixExcelExporter.export(terms, pmiMatrix, './output/pmi.xlsx')
+    let pmiMatrix = textAnalytics.buildPMIMatrix(terms)
+    PMIMatrixExcelExporter.export(terms, pmiMatrix, './output/pmi.xlsx')
     try {
-      fs.unlinkSync(fileName)
+      fs.unlinkSync(tempFileName)
     } catch (e) {
     }
   })
