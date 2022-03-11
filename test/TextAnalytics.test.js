@@ -2,7 +2,7 @@ const FoodServiceDataset = require('../src/DataSet/FoodServicesDataset')
 const { TextAnalytics } = require('../src/TextAnalytics')
 const os = require('os')
 const fs = require('fs')
-const { PMIMatrixExcelExporter } = require('../src/Writers/PMIMatrixExcelExporter')
+const { PMIMatrixExcelExporter } = require('../src/Writers/PMIMatrixExcelWriter')
 
 describe('測試 readDocumentsFromExcel', function () {
   test('應能產生 tfidf.xlsx。', function () {
