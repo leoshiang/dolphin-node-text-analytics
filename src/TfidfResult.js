@@ -1,6 +1,9 @@
-const { Vector } = require('node-dolphin')
-const { Matrix } = require('node-dolphin')
+const { Vector } = require('dolphin-node-core')
+const { Matrix } = require('dolphin-node-core')
 
+/**
+ * @class
+ */
 class TfidfResult {
   #allWords
   #idf

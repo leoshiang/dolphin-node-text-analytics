@@ -1,7 +1,7 @@
 const { Jieba } = require('./Jieba')
 const { Corpus } = require('./Corpus')
 const { WordsSegmenter } = require('./WordsSegmenter')
-const { Matrix } = require('node-dolphin')
+const { Matrix } = require('dolphin-node-core')
 const { TfidfCalculator } = require('./TfidfCalculator')
 const { TfidfResult } = require('./TfidfResult')
 const { CutMethods } = require('./WordsSegmenter')
@@ -9,6 +9,9 @@ const fs = require('fs')
 const { TfidfExcelWriter } = require('./Writers/TfidfExcelWriter')
 const { SegmentationResults } = require('./SegmentationResults')
 
+/**
+ * @class
+ */
 class TextAnalytics {
 
   #corpus
@@ -73,7 +76,8 @@ class TextAnalytics {
 
   /**
    * 計算 tfidf。
-   * @param {string} cutMethod=cut 斷詞方法，可以從 CutMethods 物件取得，可使用的值為：cut、cutHMM、cutALL與cutForSearch。
+   * @param {string} cutMethod=cut 斷詞方法，可以從 CutMethods
+   *   物件取得，可使用的值為：cut、cutHMM、cutALL與cutForSearch。
    * @return {TextAnalytics}
    */
   execute (cutMethod = CutMethods.cut) {
@@ -90,7 +94,9 @@ class TextAnalytics {
   }
 
   exportTfidfToExcel (fileName) {
-    TfidfExcelWriter.export(this.#segmentationResults, this.#tfidfResult, fileName)
+    TfidfExcelWriter.export(this.#segmentationResults,
+                            this.#tfidfResult,
+                            fileName)
     return this
   }
 
@@ -144,7 +150,8 @@ class TextAnalytics {
    * @return {number}
    */
   pxy (x, y) {
-    return this.#corpus.numberOfLinesIncludes([x, y]) / this.#segmentationResults.totalWordCount
+    return this.#corpus.numberOfLinesIncludes([x, y]) /
+      this.#segmentationResults.totalWordCount
   }
 
   /**

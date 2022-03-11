@@ -1,8 +1,11 @@
 const _ = require('lodash')
-const { Matrix } = require('node-dolphin')
-const { Vector } = require('node-dolphin')
+const { Matrix } = require('dolphin-node-core')
+const { Vector } = require('dolphin-node-core')
 const { TfidfResult } = require('./TfidfResult')
 
+/**
+ * @class
+ */
 class TfidfCalculator {
 
   /**
@@ -24,7 +27,8 @@ class TfidfCalculator {
         tf[wordIndex][docIndex] = wordDocumentMatrix[wordIndex][docIndex] /
           results.documentWordCount[docIndex]
       })
-      idf[wordIndex] = 1 + Math.log((results.length + 1) / (results.documentFrequency(word) + 1))
+      idf[wordIndex] = 1 +
+        Math.log((results.length + 1) / (results.documentFrequency(word) + 1))
     })
 
     results.allWords.forEach((word, wordIndex) => {

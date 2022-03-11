@@ -25,7 +25,10 @@ class TfidfExcelWriter {
     workbook.write(fileName)
   }
 
-  static #outputColumnAndRowsTitle (worksheet, tfidfResult, segmentationResults) {
+  static #outputColumnAndRowsTitle (
+    worksheet,
+    tfidfResult,
+    segmentationResults) {
     if (segmentationResults) {
       segmentationResults.forEach((t, index) => {
         worksheet.cell(1, index + 2).string(t.document.name)

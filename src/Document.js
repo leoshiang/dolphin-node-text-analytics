@@ -1,6 +1,6 @@
 const fs = require('fs')
-const { Type } = require('node-dolphin')
-const { StrUtils } = require('node-dolphin')
+const { Type } = require('dolphin-node-core')
+const { StrUtils } = require('dolphin-node-core')
 
 /**
  * @class

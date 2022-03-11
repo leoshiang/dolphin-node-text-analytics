@@ -1,6 +1,6 @@
 {
-  "name": "node-dolphin-nlp",
-  "version": "0.0.15",
+  "name": "dolphin-node-text-analytics",
+  "version": "0.1.0",
   "main": "./index.js",
   "description": "",
   "author": "Leo Shiang <leoshiang@gmail.com>",
@@ -20,7 +20,6 @@
     "@babel/preset-env": "^7.16.11",
     "babel-loader": "^8.2.3",
     "babel-plugin-rewire": "^1.2.0",
-    "better-docs": "^2.7.2",
     "jest": "^27.5.1"
   },
   "dependencies": {
@@ -29,7 +28,7 @@
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
     "mock-fs": "^5.1.2",
-    "node-dolphin": "^0.0.16",
+    "dolphin-node-core": "^0.1.0",
     "nodejieba": "^2.6.0",
     "random-access-file": "^2.2.0",
     "webpack": "^5.69.1",

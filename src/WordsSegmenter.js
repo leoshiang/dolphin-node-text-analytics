@@ -3,7 +3,7 @@ const { Corpus } = require('../src/Corpus')
 const { Document } = require('../src/Document')
 const { SegmentationResult } = require('./SegmentationResult')
 const { SegmentationResults } = require('./SegmentationResults')
-const { InvalidParameterException } = require('node-dolphin')
+const { InvalidParameterException } = require('dolphin-node-core')
 
 /**
  * @constant 斷詞模式。
@@ -21,7 +21,8 @@ const CutMethods = {
 
 /**
  * @constant 斷詞模式。
- * @type {{cutHMM: (function(*): string[]), cutForSearch: (function(*): string[]), cut:
+ * @type {{cutHMM: (function(*): string[]), cutForSearch: (function(*):
+ *   string[]), cut:
  *   (function(*): string[]), cutALL: (function(*): string[])}}
  */
 const CutFunctions = {
@@ -40,7 +41,8 @@ class WordsSegmenter {
   /**
    * 對一份文件做斷詞處理。
    * @param {Document} document 文件。
-   * @param {string} cutMethod=cut 斷詞方法，可以從 CutMethods 物件取得，可使用的值為：cut、cutHMM、cutALL與cutForSearch。
+   * @param {string} cutMethod=cut 斷詞方法，可以從 CutMethods
+   *   物件取得，可使用的值為：cut、cutHMM、cutALL與cutForSearch。
    * @param {String[]} [stopWords=[]] 停等字陣列。
    * @throws {TypeError} 如果 document 參數不是 Document 類別會拋出此例外。
    * @return {SegmentationResult}
@@ -54,7 +56,8 @@ class WordsSegmenter {
     }
     let method = CutFunctions[cutMethod]
     if (!method) {
-      throw new InvalidParameterException('參數 cutMethod 必須是 cut、cutHMM、cutALL、cutForSearch 其中一個。')
+      throw new InvalidParameterException(
+        '參數 cutMethod 必須是 cut、cutHMM、cutALL、cutForSearch 其中一個。')
     }
     let words = method(document).filter(x => (x !== ' ') && !stopWords[x])
     return new SegmentationResult(document, words)
@@ -63,7 +66,8 @@ class WordsSegmenter {
   /**
    * 對文件集合做斷詞處理。
    * @param {Corpus} corpus 文件集合。
-   * @param {string} cutMethod=cut 斷詞方法，可以從 CutMethods 物件取得，可使用的值為：cut、cutHMM、cutALL與cutForSearch。
+   * @param {string} cutMethod=cut 斷詞方法，可以從 CutMethods
+   *   物件取得，可使用的值為：cut、cutHMM、cutALL與cutForSearch。
    * @param {String[]} [stopWords=[]] 停等字陣列。
    * @throws {TypeError} 如果 corpus 參數不是 Corpus 類別會拋出此例外。
    * @return {SegmentationResults}
@@ -76,7 +80,9 @@ class WordsSegmenter {
       throw new TypeError('參數 corpus 必須是 Corpus 物件。')
     }
     let results = []
-    corpus.forEach(document => results.push(this.tokenize(document, cutMethod, stopWords)))
+    corpus.forEach(document => results.push(this.tokenize(document,
+                                                          cutMethod,
+                                                          stopWords)))
     return new SegmentationResults(results)
   }
 }

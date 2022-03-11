@@ -2,7 +2,7 @@ const FoodServiceDataset = require('../src/DataSet/FoodServicesDataset')
 const { TextAnalytics } = require('../src/TextAnalytics')
 const os = require('os')
 const fs = require('fs')
-const { PMIMatrixExcelExporter } = require('../src/Writers/PMIMatrixExcelWriter')
+const { PMIMatrixExcelWriter } = require('../src/Writers/PMIMatrixExcelWriter')
 
 describe('測試 readDocumentsFromExcel', function () {
   test('應能產生 tfidf.xlsx。', function () {
@@ -194,7 +194,7 @@ describe('測試 pmi', function () {
       '環境',
     ]
     let pmiMatrix = textAnalytics.buildPMIMatrix(terms)
-    PMIMatrixExcelExporter.export(terms, pmiMatrix, './output/pmi.xlsx')
+    PMIMatrixExcelWriter.export(terms, pmiMatrix, './output/pmi.xlsx')
     try {
       fs.unlinkSync(tempFileName)
     } catch (e) {

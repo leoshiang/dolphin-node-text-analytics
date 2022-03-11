@@ -22,7 +22,8 @@ function readDocumentsFromWorkBook (workbook) {
   let result = []
   workbook.SheetNames
           .forEach(sheetName => {
-            let document = createDocumentFromWorksheet(workbook.Sheets[sheetName], sheetName)
+            let document = createDocumentFromWorksheet(workbook.Sheets[sheetName],
+                                                       sheetName)
             result.push(document)
           })
   return result

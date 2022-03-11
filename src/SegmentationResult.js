@@ -32,7 +32,8 @@ class SegmentationResult {
     this.#wordCount = _.countBy(words)
     this.#words = _.keys(this.#wordCount)
     this.#totalWordCount = _.keys(this.#wordCount)
-                            .reduce((acc, curr) => acc + this.#wordCount[curr], 0)
+                            .reduce((acc, curr) => acc + this.#wordCount[curr],
+                                    0)
   }
 
   get document () {

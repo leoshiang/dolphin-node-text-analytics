@@ -1,6 +1,6 @@
 const _ = require('lodash')
-const { Matrix } = require('node-dolphin')
-const { Vector } = require('node-dolphin')
+const { Matrix } = require('dolphin-node-core')
+const { Vector } = require('dolphin-node-core')
 
 /**
  * @class
@@ -14,7 +14,7 @@ class SegmentationResults extends Array {
   #wordDocumentMatrix
 
   constructor (results) {
-    super(...(results ||[]))
+    super(...(results || []))
     this.#buildWordDocumentMatrix()
   }
 
@@ -37,7 +37,8 @@ class SegmentationResults extends Array {
   #buildWordDocumentMatrix () {
     this.#allWords = this.reduce((acc, curr) => _.merge(acc, curr.words), [])
     this.#wordCount = {}
-    this.#wordDocumentMatrix = new Matrix(this.#allWords.length, this.length).fill(0)
+    this.#wordDocumentMatrix = new Matrix(this.#allWords.length,
+                                          this.length).fill(0)
     this.#documentWordCount = new Vector(this.#allWords.length).fill(0)
 
     this.#allWords.forEach((word, wordIndex) => {

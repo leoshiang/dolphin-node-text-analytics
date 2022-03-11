@@ -56,7 +56,8 @@ class Corpus {
    * @return {number}
    */
   numberOfLinesIncludes (terms) {
-    return this.#documents.reduce((acc, curr) => acc + curr.numberOfLinesIncludes(terms), 0)
+    return this.#documents.reduce((acc, curr) => acc +
+      curr.numberOfLinesIncludes(terms), 0)
   }
 
   /**
